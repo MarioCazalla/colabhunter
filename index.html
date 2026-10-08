@@ -1,0 +1,2763 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ColabHunter | Plataforma de Colaboración e Investigación Genómica</title>
+  
+  <!-- Typography & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+/* ==========================================================================
+   ProjectMatcher - CSS Design System & Theme Styling
+   ========================================================================== */
+
+:root {
+  /* Clean Light Theme Color Palette (Default) */
+  --bg-primary: #F8FAFC;
+  --bg-secondary: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #F1F5F9;
+  --bg-input: #F8FAFC;
+  
+  --border-color: #E2E8F0;
+  --border-accent: #2563EB;
+  
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+  
+  --accent-primary: #2563EB;
+  --accent-primary-hover: #1D4ED8;
+  --accent-teal: #059669;
+  --accent-cyan: #0284C7;
+  --accent-pink: #E11D48;
+  --accent-warning: #D97706;
+  
+  --gradient-primary: linear-gradient(135deg, #2563EB 0%, #4F46E5 100%);
+  --gradient-card: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+  --gradient-header: linear-gradient(90deg, #FFFFFF 0%, #F1F5F9 100%);
+  
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 14px rgba(15, 23, 42, 0.06);
+  --shadow-glow: 0 0 15px rgba(37, 99, 235, 0.15);
+
+  --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: 'Plus Jakarta Sans', sans-serif;
+  --font-code: 'Fira Code', monospace;
+  
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+}
+
+/* Dark Theme Overrides */
+body.dark-theme {
+  --bg-primary: #0B0F19;
+  --bg-secondary: #111827;
+  --bg-card: #1F2937;
+  --bg-card-hover: #2B374A;
+  --bg-input: #111827;
+  
+  --border-color: #374151;
+  --border-accent: #6366F1;
+  
+  --text-primary: #F9FAFB;
+  --text-secondary: #9CA3AF;
+  --text-muted: #6B7280;
+  
+  --accent-primary: #6366F1;
+  --accent-primary-hover: #4F46E5;
+  --accent-teal: #10B981;
+  --accent-cyan: #06B6D4;
+  --accent-pink: #F43F5E;
+  --accent-warning: #F59E0B;
+  
+  --gradient-primary: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+  --gradient-card: linear-gradient(180deg, rgba(31, 41, 55, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%);
+  --gradient-header: linear-gradient(90deg, #0F172A 0%, #1E1B4B 100%);
+  
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.35);
+}
+
+/* Light Theme Overrides */
+body.light-theme {
+  --bg-primary: #F8FAFC;
+  --bg-secondary: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #F1F5F9;
+  --bg-input: #F8FAFC;
+  
+  --border-color: #E2E8F0;
+  --border-accent: #6366F1;
+  
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #94A3B8;
+  
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.15);
+}
+
+/* Reset & Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+/* Header Navbar */
+.app-header {
+  background: var(--gradient-header);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(12px);
+}
+
+.header-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brand-logo {
+  width: 42px;
+  height: 42px;
+  background: var(--gradient-primary);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: #FFF;
+  box-shadow: var(--shadow-glow);
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-title {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.brand-title .highlight {
+  color: var(--accent-primary);
+}
+
+.brand-subtitle {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Main Navigation */
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.35rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+}
+
+.nav-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  padding: 0.55rem 1rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.nav-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-btn.active {
+  background: var(--accent-primary);
+  color: #FFF;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.badge-catalonia {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--accent-teal);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.icon-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.icon-btn:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--accent-primary);
+}
+
+/* App Main Content */
+.app-content {
+  flex: 1;
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.tab-pane {
+  display: none;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   TAB 1: SLIDE DECK (PRESENTACIÓN 2D)
+   ========================================================================== */
+
+.slide-deck-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.slide-deck-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-card);
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.slide-control-btn {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 0.5rem 1.2rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.slide-control-btn:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.slide-control-btn.secondary {
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.slide-indicators {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.slide-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--border-color);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.slide-dot.active {
+  background: var(--accent-primary);
+  width: 28px;
+  border-radius: 10px;
+}
+
+.slide-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: 2.5rem;
+  min-height: 540px;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.slide {
+  display: none;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.slide.active {
+  display: flex;
+}
+
+.slide-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1rem;
+}
+
+.slide-category {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+  color: var(--accent-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.slide-header h2 {
+  font-size: 1.8rem;
+}
+
+/* Grids inside Slides */
+.grid-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.grid-3col {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.slide-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.slide-card.accent-border {
+  border-left: 4px solid var(--accent-warning);
+}
+
+.slide-card.highlight-border {
+  border-left: 4px solid var(--accent-primary);
+  background: linear-gradient(180deg, rgba(99, 102, 241, 0.08) 0%, rgba(17, 24, 39, 0.9) 100%);
+}
+
+.slide-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.slide-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.color-warning { color: var(--accent-warning); }
+.color-primary { color: var(--accent-primary); }
+.color-secondary { color: var(--accent-cyan); }
+.color-danger { color: var(--accent-pink); }
+.color-success { color: var(--accent-teal); }
+.color-accent { color: var(--accent-cyan); }
+
+/* Slide 2 Comparison Table */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.92rem;
+}
+
+.comparison-table th, .comparison-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.comparison-table th {
+  background: var(--bg-secondary);
+  font-family: var(--font-heading);
+  color: var(--text-secondary);
+}
+
+.comparison-table th.highlight-col {
+  background: rgba(99, 102, 241, 0.15);
+  color: var(--accent-primary);
+}
+
+.tag {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.tag-primary { background: rgba(99, 102, 241, 0.2); color: var(--accent-primary); }
+.tag-success { background: rgba(16, 185, 129, 0.2); color: var(--accent-teal); }
+.tag-info { background: rgba(6, 182, 212, 0.2); color: var(--accent-cyan); }
+.tag-warning { background: rgba(245, 158, 11, 0.2); color: var(--accent-warning); }
+
+/* Slide 4 Formula Box & Workflow */
+.formula-box {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px dashed var(--accent-primary);
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  text-align: center;
+  font-family: var(--font-code);
+  font-size: 1.1rem;
+  color: var(--accent-cyan);
+}
+
+.workflow-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.wf-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: var(--bg-secondary);
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+}
+
+.step-num {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  color: #FFF;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.step-text strong {
+  display: block;
+  font-size: 0.95rem;
+}
+
+.step-text p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* Slide 5 Timeline */
+.timeline-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border-left: 2px solid var(--accent-teal);
+  padding-left: 1rem;
+  margin-left: 0.5rem;
+}
+
+.tl-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.tl-phase {
+  font-size: 0.75rem;
+  color: var(--accent-teal);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   TAB 2: EXPLORADOR DE PROYECTOS
+   ========================================================================== */
+
+.explorer-container {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 1.5rem;
+}
+
+.explorer-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.filter-group {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.filter-group h3 {
+  font-size: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.form-control label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+input[type="text"], input[type="number"], input[type="email"], select, textarea {
+  width: 100%;
+  padding: 0.6rem 0.85rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-family: var(--font-main);
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.input-with-icon {
+  position: relative;
+}
+
+.input-with-icon i {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+}
+
+.input-with-icon input {
+  padding-left: 2.2rem;
+}
+
+.sidebar-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  text-align: center;
+}
+
+.stat-number {
+  font-family: var(--font-heading);
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--accent-primary);
+  display: block;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Explorer Main & Cards Grid */
+.explorer-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.explorer-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-lg);
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.25rem;
+}
+
+/* Project Card Item */
+.project-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.25rem;
+  transition: all 0.25 ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.project-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent-primary);
+  box-shadow: var(--shadow-md);
+}
+
+.project-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.gene-badge {
+  background: var(--gradient-primary);
+  color: #FFF;
+  font-family: var(--font-code);
+  font-size: 1.15rem;
+  font-weight: 700;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+}
+
+.status-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.3rem 0.65rem;
+  border-radius: 12px;
+  text-transform: uppercase;
+}
+
+.status-recruiting { background: rgba(16, 185, 129, 0.15); color: var(--accent-teal); border: 1px solid rgba(16, 185, 129, 0.3); }
+.status-functional { background: rgba(245, 158, 11, 0.15); color: var(--accent-warning); border: 1px solid rgba(245, 158, 11, 0.3); }
+.status-manuscript { background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan); border: 1px solid rgba(6, 182, 212, 0.3); }
+
+.project-title {
+  font-size: 1.05rem;
+  line-height: 1.4;
+  margin-top: 0.3rem;
+}
+
+.project-institution {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Cohort Progress Bar */
+.cohort-progress-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.cohort-progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.cohort-progress-bar {
+  height: 8px;
+  background: var(--bg-secondary);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.cohort-progress-fill {
+  height: 100%;
+  background: var(--gradient-primary);
+  border-radius: 10px;
+  transition: width 0.4s ease;
+}
+
+.hpo-tags-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.hpo-tag {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-code);
+}
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-top: 1px solid var(--border-color);
+  padding-top: 1rem;
+}
+
+/* ==========================================================================
+   BUTTONS & COMMON UI COMPONENTS
+   ========================================================================== */
+
+.btn {
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius-md);
+  font-family: var(--font-main);
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background: var(--gradient-primary);
+  color: #FFF;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.5);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--accent-primary);
+}
+
+.btn-lg {
+  padding: 0.85rem 1.8rem;
+  font-size: 1rem;
+  border-radius: var(--radius-lg);
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* ==========================================================================
+   TAB 3: PUBLICAR PROYECTO
+   ========================================================================== */
+
+.publish-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.publish-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: 2.5rem;
+  box-shadow: var(--shadow-md);
+}
+
+.publish-header {
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.publish-header h2 {
+  font-size: 1.6rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.publish-header p {
+  color: var(--text-secondary);
+  margin-top: 0.3rem;
+}
+
+.project-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: rgba(0, 0, 0, 0.15);
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+}
+
+.form-section h3 {
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--accent-primary);
+}
+
+.section-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  color: #FFF;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+}
+
+.grid-2col-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.grid-3col-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+}
+
+.hpo-picker {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.hpo-chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.hpo-chip {
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  color: var(--accent-primary);
+  padding: 0.3rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.remove-chip {
+  cursor: pointer;
+}
+
+.remove-chip:hover {
+  color: var(--accent-pink);
+}
+
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.3rem;
+}
+
+.checkbox-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.radio-card-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.radio-card {
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.2rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.radio-card.active {
+  border-color: var(--accent-primary);
+  background: rgba(99, 102, 241, 0.08);
+}
+
+.radio-card-content strong {
+  display: block;
+  font-size: 0.95rem;
+  margin-bottom: 0.2rem;
+}
+
+.radio-card-content p {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid var(--border-color);
+  padding-top: 1.5rem;
+}
+
+/* ==========================================================================
+   TAB 4: SIMULADOR DE MATCH
+   ========================================================================== */
+
+.matcher-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.matcher-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  box-shadow: var(--shadow-md);
+}
+
+.matcher-header {
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.matcher-form-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1.5fr 1.2fr;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.align-end {
+  display: flex;
+  align-items: flex-end;
+}
+
+.match-results-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+}
+
+.results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.badge-algo {
+  background: rgba(6, 182, 212, 0.15);
+  color: var(--accent-cyan);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  padding: 0.3rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Result item */
+.result-item {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  transition: all 0.2s ease;
+}
+
+.result-item:hover {
+  border-color: var(--accent-primary);
+  background: var(--bg-card-hover);
+}
+
+.match-score-pill {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--gradient-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #FFF;
+  font-weight: 800;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+  flex-shrink: 0;
+}
+
+.match-score-pill span {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.result-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.result-gene-title {
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.result-breakdown {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 0.2rem;
+}
+
+.result-breakdown span {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+/* ==========================================================================
+   TAB 5: GOBERNANZA
+   ========================================================================== */
+
+.governance-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.gov-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+}
+
+.gov-card p {
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+  font-size: 1.05rem;
+}
+
+.gov-grid {
+  gap: 1.25rem;
+}
+
+.gov-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.gov-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: rgba(99, 102, 241, 0.15);
+  color: var(--accent-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+}
+
+.gov-box p {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+/* ==========================================================================
+   MODAL WINDOW
+   ========================================================================== */
+
+.modal-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.modal-backdrop.active {
+  display: flex;
+}
+
+.modal-window {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  width: 100%;
+  max-width: 700px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-md);
+  animation: modalSlide 0.25s ease-out;
+}
+
+@keyframes modalSlide {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.modal-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.modal-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.modal-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .explorer-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .grid-2col, .grid-3col, .radio-card-group {
+    grid-template-columns: 1fr;
+  }
+  
+  .matcher-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+  </style>
+</head>
+<body class="light-theme">
+
+  <!-- Main Navigation Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-logo">
+          <i class="fa-solid fa-dna"></i>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Colab<span class="highlight">Hunter</span></span>
+          <span class="brand-subtitle">Genomics Cohort & Project Network</span>
+        </div>
+      </div>
+
+      <nav class="main-nav">
+        <button class="nav-btn active" data-tab="slides-tab">
+          <i class="fa-solid fa-file-powerpoint"></i> Presentación 2D
+        </button>
+        <button class="nav-btn" data-tab="explorer-tab">
+          <i class="fa-solid fa-diagram-project"></i> Explorador de Proyectos
+        </button>
+        <button class="nav-btn" data-tab="publish-tab">
+          <i class="fa-solid fa-plus-circle"></i> Publicar Proyecto
+        </button>
+        <button class="nav-btn" data-tab="matcher-tab">
+          <i class="fa-solid fa-bolt-lightning"></i> Simulador de Match
+        </button>
+        <button class="nav-btn" data-tab="governance-tab">
+          <i class="fa-solid fa-shield-halved"></i> Gobernanza
+        </button>
+      </nav>
+
+      <div class="header-actions">
+        <span class="badge-catalonia"><i class="fa-solid fa-location-dot"></i> Nodo Cataluña / Global</span>
+        <button id="theme-toggle" class="icon-btn" title="Cambiar Tema">
+          <i class="fa-solid fa-sun"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Application Content Container -->
+  <main class="app-content">
+
+    <!-- ========================================== -->
+    <!-- TAB 1: PRESENTACIÓN 2D (SLIDE DECK)       -->
+    <!-- ========================================== -->
+    <section id="slides-tab" class="tab-pane active">
+      <div class="slide-deck-wrapper">
+        <div class="slide-deck-controls">
+          <button id="prev-slide" class="slide-control-btn"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
+          <div class="slide-indicators" id="slide-indicators"></div>
+          <button id="next-slide" class="slide-control-btn">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
+          <button id="fullscreen-slide" class="slide-control-btn secondary"><i class="fa-solid fa-expand"></i> Pantalla Completa</button>
+        </div>
+
+        <div class="slide-container" id="slide-container">
+          
+          <!-- SLIDE 1 -->
+          <div class="slide active" data-slide="1">
+            <div class="slide-header">
+              <span class="slide-category"><i class="fa-solid fa-lightbulb"></i> Visión & Necesidad</span>
+              <h2>¿Por qué ColabHunter? El siguiente paso tras GeneMatcher</h2>
+            </div>
+            <div class="slide-body grid-2col">
+              <div class="slide-card accent-border">
+                <h3><i class="fa-solid fa-puzzle-piece color-warning"></i> La Limitación Actual (GeneMatcher)</h3>
+                <p><strong>GeneMatcher</strong> nació para emparejar pacientes <em>N-of-1</em> aislados y confirmar si un gen candidato es causante de enfermedad.</p>
+                <ul class="slide-list">
+                  <li><i class="fa-solid fa-xmark color-danger"></i> Enfocado en coincidencias 1 a 1 de genes candidatos no descritos.</li>
+                  <li><i class="fa-solid fa-xmark color-danger"></i> No muestra el <strong>estado del proyecto de investigación</strong> ni el progreso de las cohortes.</li>
+                  <li><i class="fa-solid fa-xmark color-danger"></i> Dificultad para coordinar grupos que necesitan validar modelos funcionales (e.g. iPSC, electrofisiología) o ampliar $N$ para publicaciones.</li>
+                </ul>
+              </div>
+
+              <div class="slide-card highlight-border">
+                <h3><i class="fa-solid fa-rocket color-primary"></i> La Solución: ColabHunter</h3>
+                <p>Una plataforma centrada en <strong>Proyectos de Investigación y Cohortes en Marcha</strong>.</p>
+                <ul class="slide-list">
+                  <li><i class="fa-solid fa-check color-success"></i> <strong>Conexión entre laboratorios</strong> (ej. Sant Joan de Déu, Vall d'Hebron, IDIBELL, UB y red internacional).</li>
+                  <li><i class="fa-solid fa-check color-success"></i> Visibilidad de la <strong>cohorte disponible vs meta</strong> ($N=5 / N_{meta}=15$).</li>
+                  <li><i class="fa-solid fa-check color-success"></i> Especificación de <strong>mecanismo mutacional</strong> (Gain-of-Function, Loss-of-Function, Dominante Negativo).</li>
+                  <li><i class="fa-solid fa-check color-success"></i> Coordinación para <strong>coautoría y aceleración de manuscritos</strong>.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- SLIDE 2 -->
+          <div class="slide" data-slide="2">
+            <div class="slide-header">
+              <span class="slide-category"><i class="fa-solid fa-scale-balanced"></i> Comparativa Estratégica</span>
+              <h2>GeneMatcher vs ColabHunter</h2>
+            </div>
+            <div class="slide-body">
+              <div class="table-responsive">
+                <table class="comparison-table">
+                  <thead>
+                    <tr>
+                      <th>Dimensión</th>
+                      <th>GeneMatcher (MME)</th>
+                      <th class="highlight-col">ColabHunter (Tu Plataforma)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>Unidad de Registro</strong></td>
+                      <td>Paciente o Gen candidato individual</td>
+                      <td><span class="tag tag-primary">Proyecto / Cohorte de Investigación</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Objetivo Principal</strong></td>
+                      <td>Descubrir el primer caso o confirmar causa génica</td>
+                      <td><span class="tag tag-success">Ampliar cohorte + Validación Funcional + Coautoría</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Detalle Fenotípico & Mecanismo</strong></td>
+                      <td>Términos HPO básicos</td>
+                      <td><span class="tag tag-info">HPO + Genotipo/Mecanismo (LoF/GoF) + Modelos (iPSC/Raton/Electrofisiología)</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Estado del Proyecto</strong></td>
+                      <td>No disponible (solo contacto)</td>
+                      <td><span class="tag tag-warning">Etapas: Reclutamiento, Ensayos, Redacción de Manuscrito</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Modelo de Visibilidad</strong></td>
+                      <td>Emparejamiento ciego por correo</td>
+                      <td><span>Híbrido: Catálogo Abierto para Colaboración + Blind Matching</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Enfoque Territorial</strong></td>
+                      <td>Global descentralizado</td>
+                      <td><span>Comunidad Regional (e.g. Cataluña) + Conexión Global GA4GH</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- SLIDE 3 -->
+          <div class="slide" data-slide="3">
+            <div class="slide-header">
+              <span class="slide-category"><i class="fa-solid fa-database"></i> Modelo de Datos</span>
+              <h2>Estructura de la Ficha del Proyecto de Investigación</h2>
+            </div>
+            <div class="slide-body grid-3col">
+              <div class="slide-card">
+                <div class="card-icon"><i class="fa-solid fa-dna"></i></div>
+                <h4>1. Genómica & Mecanismo</h4>
+                <ul>
+                  <li><strong>Símbolo HGNC:</strong> ej. <code>KCNQ2</code>, <code>SYNGAP1</code></li>
+                  <li><strong>Ensembl ID:</strong> <code>ENSG00000075624</code></li>
+                  <li><strong>Mecanismo Esperado:</strong> Loss-of-Function, Gain-of-Function, Dominante Negativo.</li>
+                  <li><strong>Región / Dominio:</strong> Canales iónicos, Dominio Kinasa, etc.</li>
+                </ul>
+              </div>
+
+              <div class="slide-card">
+                <div class="card-icon"><i class="fa-solid fa-clipboard-user"></i></div>
+                <h4>2. Fenotipo HPO & Cohorte</h4>
+                <ul>
+                  <li><strong>Términos HPO:</strong> <code>HP:0001250</code> (Seizures), <code>HP:0001263</code> (ID).</li>
+                  <li><strong>Cohorte Actual ($N$):</strong> N=4 pacientes caracterizados.</li>
+                  <li><strong>Objetivo Cohorte ($N_{meta}$):</strong> N=12 para poder publicar.</li>
+                  <li><strong>Disponibilidad de Muestras:</strong> ADN, Biobanco, iPSC derivado.</li>
+                </ul>
+              </div>
+
+              <div class="slide-card">
+                <div class="card-icon"><i class="fa-solid fa-flask"></i></div>
+                <h4>3. Grupo & Estado del Proyecto</h4>
+                <ul>
+                  <li><strong>Laboratorio / IP:</strong> Dr. / Dra. Investigador Principal.</li>
+                  <li><strong>Institución:</strong> Sant Joan de Déu, Vall d'Hebron, IDIBELL, UB.</li>
+                  <li><strong>Fase Activa:</strong> Reclutamiento, Ensayos Funcionales, Manuscrito.</li>
+                  <li><strong>Modelos Experimentales:</strong> Patch-clamp, Organoides cerebrales.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- SLIDE 4 -->
+          <div class="slide" data-slide="4">
+            <div class="slide-header">
+              <span class="slide-category"><i class="fa-solid fa-gears"></i> Motor de Coincidencia</span>
+              <h2>Algoritmo Inteligente de Matching de Proyectos</h2>
+            </div>
+            <div class="slide-body grid-2col">
+              <div class="slide-card">
+                <h3><i class="fa-solid fa-calculator color-primary"></i> Puntuación de Coincidencia ($S_{Total}$)</h3>
+                <p>El motor calcula un índice de compatibilidad ponderado entre proyectos:</p>
+                <div class="formula-box">
+                  $$S_{Total} = w_g \cdot S_{Gen} + w_h \cdot S_{HPO} + w_m \cdot S_{Mec} + w_c \cdot S_{Coh}$$
+                </div>
+                <ul class="slide-list">
+                  <li><strong>Coincidencia de Gen ($S_{Gen}$ - 40%):</strong> Coincidencia exacta por HGNC o paralogos.</li>
+                  <li><strong>Similitud Fenotípica ($S_{HPO}$ - 30%):</strong> Matriz de similitud semántica HPO (Resnik / Lin IC).</li>
+                  <li><strong>Concordancia Genotipo/Mecanismo ($S_{Mec}$ - 20%):</strong> Solapamiento en el tipo de variante (LoF vs GoF).</li>
+                  <li><strong>Complementariedad de Cohorte ($S_{Coh}$ - 10%):</strong> Grupos con modelo funcional + grupos con pacientes.</li>
+                </ul>
+              </div>
+
+              <div class="slide-card highlight-border">
+                <h3><i class="fa-solid fa-bell color-accent"></i> Sistema de Alertas Automáticas</h3>
+                <div class="workflow-steps">
+                  <div class="wf-step">
+                    <span class="step-num">1</span>
+                    <div class="step-text">
+                      <strong>Publicación o actualización de proyecto</strong>
+                      <p>Un equipo en Vall d'Hebron registra una cohorte en <em>STXBP1</em>.</p>
+                    </div>
+                  </div>
+                  <div class="wf-step">
+                    <span class="step-num">2</span>
+                    <div class="step-text">
+                      <strong>Escaneo en tiempo real</strong>
+                      <p>El algoritmo detecta un proyecto activo en Sant Joan de Déu con $S_{Total} = 94\%$.</p>
+                    </div>
+                  </div>
+                  <div class="wf-step">
+                    <span class="step-num">3</span>
+                    <div class="step-text">
+                      <strong>Notificación & Solicitud de Conexión</strong>
+                      <p>Ambos IPs reciben una alerta con opción de abrir una sala de trabajo confidencial.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SLIDE 5 -->
+          <div class="slide" data-slide="5">
+            <div class="slide-header">
+              <span class="slide-category"><i class="fa-solid fa-diagram-next"></i> Hoja de Ruta</span>
+              <h2>Plan de Implementación y Arquitectura Técnica</h2>
+            </div>
+            <div class="slide-body grid-2col">
+              <div class="slide-card">
+                <h3><i class="fa-solid fa-server color-secondary"></i> Arquitectura Recomendada</h3>
+                <ul class="slide-list">
+                  <li><strong>Frontend:</strong> Web App Responsiva (React / Next.js + Tailwind / Vanilla CSS premium).</li>
+                  <li><strong>Backend API:</strong> FastAPI (Python) o Node.js REST API.</li>
+                  <li><strong>Base de Datos:</strong> PostgreSQL con soporte JSONB + Neo4j o HPO Graph DB.</li>
+                  <li><strong>Integración GA4GH:</strong> API Matchmaker Exchange (MME) v2 protocol.</li>
+                  <li><strong>Seguridad:</strong> Autenticación OAuth2 con ORCID de investigadores.</li>
+                </ul>
+              </div>
+
+              <div class="slide-card">
+                <h3><i class="fa-solid fa-timeline color-success"></i> Fases del Proyecto</h3>
+                <div class="timeline-mini">
+                  <div class="tl-item">
+                    <span class="tl-phase">Fase 1 (Actual)</span>
+                    <strong>Prototipo Interactivo & Definición de Requisitos</strong>
+                  </div>
+                  <div class="tl-item">
+                    <span class="tl-phase">Fase 2</span>
+                    <strong>Desarrollo MVP & Registro de Proyectos en Cataluña (SJD, HUVH, IDIBELL)</strong>
+                  </div>
+                  <div class="tl-item">
+                    <span class="tl-phase">Fase 3</span>
+                    <strong>Integración de Algoritmo HPO & Notificaciones Automáticas</strong>
+                  </div>
+                  <div class="tl-item">
+                    <span class="tl-phase">Fase 4</span>
+                    <strong>Conexión Internacional GA4GH / Matchmaker Exchange</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 2: EXPLORADOR DE PROYECTOS            -->
+    <!-- ========================================== -->
+    <section id="explorer-tab" class="tab-pane">
+      <div class="explorer-container">
+        
+        <!-- Sidebar Filters -->
+        <aside class="explorer-sidebar">
+          <div class="filter-group">
+            <h3><i class="fa-solid fa-filter"></i> Filtros de Búsqueda</h3>
+            
+            <div class="form-control">
+              <label for="search-gene">Buscar por Gen (HGNC):</label>
+              <div class="input-with-icon">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="search-gene" placeholder="Ej. KCNQ2, SYNGAP1, SCN2A...">
+              </div>
+            </div>
+
+            <div class="form-control">
+              <label for="filter-region">Región / Ámbito:</label>
+              <select id="filter-region">
+                <option value="all">Todas las Regiones</option>
+                <option value="catalonia">Cataluña (SJD, HUVH, IDIBELL, UB...)</option>
+                <option value="spain">Resto de España</option>
+                <option value="international">Internacional (Europa / EE.UU.)</option>
+              </select>
+            </div>
+
+            <div class="form-control">
+              <label for="filter-status">Estado del Proyecto:</label>
+              <select id="filter-status">
+                <option value="all">Todos los Estados</option>
+                <option value="recruiting">Reclutando Cohorte</option>
+                <option value="functional">Validación Funcional en Curso</option>
+                <option value="manuscript">Buscando Casos para Manuscrito</option>
+              </select>
+            </div>
+
+            <div class="form-control">
+              <label for="filter-hpo">Fenotipo HPO:</label>
+              <select id="filter-hpo">
+                <option value="all">Todos los Fenotipos</option>
+                <option value="seizures">Seizures / Epilepsia (HP:0001250)</option>
+                <option value="delay">Retraso del Desarrollo (HP:0001263)</option>
+                <option value="autism">Trastorno Espectro Autista (HP:0000729)</option>
+                <option value="hypotonia">Hipotonía (HP:0001290)</option>
+              </select>
+            </div>
+
+            <button id="reset-filters" class="btn btn-secondary full-width">
+              <i class="fa-solid fa-rotate-left"></i> Limpiar Filtros
+            </button>
+          </div>
+
+          <div class="sidebar-stats">
+            <div class="stat-card">
+              <span class="stat-number" id="stat-total-projects">6</span>
+              <span class="stat-label">Proyectos Activos</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number" id="stat-total-patients">42</span>
+              <span class="stat-label">Pacientes en Cohortes</span>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Projects List Grid -->
+        <main class="explorer-main">
+          <div class="explorer-header-bar">
+            <h2>Proyectos de Investigación & Cohortes Activas</h2>
+            <div class="view-options">
+              <button class="btn btn-primary" onclick="switchTab('publish-tab')">
+                <i class="fa-solid fa-plus"></i> Publicar Mi Proyecto
+              </button>
+            </div>
+          </div>
+
+          <div class="projects-grid" id="projects-grid">
+            <!-- Project Cards generated dynamically via JS -->
+          </div>
+        </main>
+
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 3: PUBLICAR PROYECTO                  -->
+    <!-- ========================================== -->
+    <section id="publish-tab" class="tab-pane">
+      <div class="publish-container">
+        <div class="publish-card">
+          <div class="publish-header">
+            <h2><i class="fa-solid fa-folder-plus"></i> Registrar un Nuevo Proyecto de Investigación</h2>
+            <p>Publica los detalles de tu gen de interés y cohorte para conectar con otros investigadores en Cataluña e internacionalmente.</p>
+          </div>
+
+          <form id="new-project-form" class="project-form">
+            
+            <!-- Step 1: Investigador e Institución -->
+            <div class="form-section">
+              <h3><span class="section-num">1</span> Investigador Principal & Institución</h3>
+              <div class="grid-2col-inputs">
+                <div class="form-group">
+                  <label for="input-ip-name">Nombre del IP / Investigador: *</label>
+                  <input type="text" id="input-ip-name" required placeholder="Ej. Dr. Xavier Pujol">
+                </div>
+                <div class="form-group">
+                  <label for="input-institution">Institución / Hospital: *</label>
+                  <input type="text" id="input-institution" required placeholder="Ej. Hospital Sant Joan de Déu (SJD)">
+                </div>
+                <div class="form-group">
+                  <label for="input-email">Correo Electrónico Académico: *</label>
+                  <input type="email" id="input-email" required placeholder="xpujol@sjd.es">
+                </div>
+                <div class="form-group">
+                  <label for="input-region">Región / Ámbito: *</label>
+                  <select id="input-region" required>
+                    <option value="catalonia">Cataluña</option>
+                    <option value="spain">Resto de España</option>
+                    <option value="international">Internacional</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2: Gen y Mecanismo -->
+            <div class="form-section">
+              <h3><span class="section-num">2</span> Datos Genómicos & Mecanismo</h3>
+              <div class="grid-2col-inputs">
+                <div class="form-group">
+                  <label for="input-gene">Gen de Interés (Símbolo HGNC): *</label>
+                  <input type="text" id="input-gene" required placeholder="Ej. KCNQ2, SYNGAP1, SCN2A" style="font-weight: 700; text-transform: uppercase;">
+                </div>
+                <div class="form-group">
+                  <label for="input-mechanism">Mecanismo Mutacional Esperado: *</label>
+                  <select id="input-mechanism" required>
+                    <option value="Loss-of-Function (LoF)">Pérdida de Función (LoF / Haploinsuficiencia)</option>
+                    <option value="Gain-of-Function (GoF)">Ganancia de Función (GoF)</option>
+                    <option value="Dominant Negative">Efecto Dominante Negativo</option>
+                    <option value="Unclear / Spectrum">En Estudio / Espectro Mixto</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="input-title">Título Corto del Proyecto: *</label>
+                <input type="text" id="input-title" required placeholder="Ej. Caracterización clínica y funcional de variaciones en el poro de KCNQ2">
+              </div>
+            </div>
+
+            <!-- Step 3: Fenotipo HPO -->
+            <div class="form-section">
+              <h3><span class="section-num">3</span> Fenotipo Clínico (Términos HPO)</h3>
+              <div class="form-group">
+                <label>Añadir Términos HPO Principales:</label>
+                <div class="hpo-picker">
+                  <input type="text" id="hpo-search-input" placeholder="Escribe para buscar o código HPO (ej. HP:0001250 Seizures)...">
+                  <button type="button" id="add-hpo-btn" class="btn btn-secondary">Añadir</button>
+                </div>
+                <div class="hpo-chips-container" id="hpo-chips">
+                  <!-- HPO Chips added here -->
+                  <span class="hpo-chip" data-code="HP:0001250">HP:0001250 Seizures <i class="fa-solid fa-xmark remove-chip"></i></span>
+                  <span class="hpo-chip" data-code="HP:0001263">HP:0001263 Global developmental delay <i class="fa-solid fa-xmark remove-chip"></i></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 4: Estado de Cohorte & Modelos -->
+            <div class="form-section">
+              <h3><span class="section-num">4</span> Estado de la Cohorte & Ensayos Disponibles</h3>
+              <div class="grid-3col-inputs">
+                <div class="form-group">
+                  <label for="input-current-n">Pacientes Actuales ($N$): *</label>
+                  <input type="number" id="input-current-n" min="1" value="5" required>
+                </div>
+                <div class="form-group">
+                  <label for="input-target-n">Meta de Cohorte ($N_{meta}$): *</label>
+                  <input type="number" id="input-target-n" min="2" value="15" required>
+                </div>
+                <div class="form-group">
+                  <label for="input-status">Estado del Proyecto: *</label>
+                  <select id="input-status" required>
+                    <option value="recruiting">Reclutando cohorte</option>
+                    <option value="functional">Validación Funcional en Curso</option>
+                    <option value="manuscript">Buscando casos finales para Manuscrito</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Modelos / Capacidad Experimental en el Lab:</label>
+                <div class="checkbox-grid">
+                  <label class="checkbox-label"><input type="checkbox" name="models" value="Electrofisiología / Patch-clamp" checked> Electrofisiología / Patch-clamp</label>
+                  <label class="checkbox-label"><input type="checkbox" name="models" value="Líneas iPSC derivadas"> Líneas iPSC derivadas</label>
+                  <label class="checkbox-label"><input type="checkbox" name="models" value="Modelos Animales (Ratón / Pez Cebra / Drosophila)"> Modelos Animales (Ratón / Drosophila)</label>
+                  <label class="checkbox-label"><input type="checkbox" name="models" value="Biobanco de Muestras de ADN / ARN" checked> Biobanco Muestras ADN / ARN</label>
+                  <label class="checkbox-label"><input type="checkbox" name="models" value="Simulación Estructural 3D"> Simulación Estructural 3D</label>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="input-description">Resumen del Proyecto / Criterios de Inclusión:</label>
+                <textarea id="input-description" rows="3" placeholder="Describe brevemente los objetivos del proyecto y qué tipo de colaboradores o pacientes adicionales estás buscando..."></textarea>
+              </div>
+            </div>
+
+            <!-- Step 5: Visibilidad & Privacidad -->
+            <div class="form-section">
+              <h3><span class="section-num">5</span> Nivel de Visibilidad & Privacidad</h3>
+              <div class="radio-card-group">
+                <label class="radio-card active">
+                  <input type="radio" name="visibility" value="public" checked>
+                  <div class="radio-card-content">
+                    <strong><i class="fa-solid fa-globe color-success"></i> Catálogo Público Abierto (Recomendado)</strong>
+                    <p>Cualquier investigador registrado en la plataforma puede ver la ficha de tu proyecto y contactarte directamente.</p>
+                  </div>
+                </label>
+                <label class="radio-card">
+                  <input type="radio" name="visibility" value="blind">
+                  <div class="radio-card-content">
+                    <strong><i class="fa-solid fa-eye-slash color-warning"></i> Emparejamiento Ciego (Estilo GeneMatcher)</strong>
+                    <p>Tu proyecto se mantiene confidencial. La plataforma notificará por correo solo cuando otro grupo registre exactamente tu gen/mecanismo.</p>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fa-solid fa-paper-plane"></i> Publicar Proyecto en ColabHunter
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 4: SIMULADOR DE MATCH                 -->
+    <!-- ========================================== -->
+    <section id="matcher-tab" class="tab-pane">
+      <div class="matcher-container">
+        
+        <div class="matcher-card">
+          <div class="matcher-header">
+            <h2><i class="fa-solid fa-bolt-lightning color-accent"></i> Simulador en Tiempo Real de Matching de Proyectos</h2>
+            <p>Introduce un gen candidato o criterios clínicos para simular cómo el algoritmo encuentra cohortes y laboratorios colaboradores compatibles.</p>
+          </div>
+
+          <div class="matcher-form-grid">
+            <div class="form-group">
+              <label for="sim-gene">Gen a Consultar (HGNC):</label>
+              <input type="text" id="sim-gene" value="KCNQ2" style="font-weight: 700; text-transform: uppercase;">
+            </div>
+
+            <div class="form-group">
+              <label for="sim-mechanism">Mecanismo Mutacional:</label>
+              <select id="sim-mechanism">
+                <option value="Loss-of-Function (LoF)">Loss-of-Function (LoF)</option>
+                <option value="Gain-of-Function (GoF)" selected>Gain-of-Function (GoF)</option>
+                <option value="Dominant Negative">Dominant Negative</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="sim-hpo">Fenotipo Principal (HPO):</label>
+              <select id="sim-hpo">
+                <option value="HP:0001250" selected>HP:0001250 - Seizures / Convulsiones</option>
+                <option value="HP:0001263">HP:0001263 - Retraso del Desarrollo</option>
+                <option value="HP:0000729">HP:0000729 - Trastorno Autista</option>
+              </select>
+            </div>
+
+            <div class="form-group align-end">
+              <button id="run-match-btn" class="btn btn-primary full-width">
+                <i class="fa-solid fa-microchip"></i> Ejecutar Algoritmo de Matching
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Match Results Area -->
+        <div class="match-results-container" id="match-results-container">
+          <div class="results-header">
+            <h3><i class="fa-solid fa-list-check"></i> Resultados de Coincidencia (<span id="results-count">0</span>)</h3>
+            <span class="badge-algo"><i class="fa-solid fa-brain"></i> Algoritmo Resnik HPO + Score Genómico</span>
+          </div>
+
+          <div class="results-list" id="results-list">
+            <!-- Dynamic Result items will appear here -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 5: GOBERNANZA & PRIVACIDAD            -->
+    <!-- ========================================== -->
+    <section id="governance-tab" class="tab-pane">
+      <div class="governance-container">
+        
+        <div class="gov-card">
+          <h2><i class="fa-solid fa-shield-halved color-primary"></i> Marco de Gobernanza, Privacidad & Coautoría</h2>
+          <p>Para asegurar que los investigadores en Cataluña e internacionales compartan sus proyectos con total confianza, ColabHunter opera bajo estándares estrictos de ética, propiedad intelectual y privacidad.</p>
+        </div>
+
+        <div class="grid-3col gov-grid">
+          
+          <div class="gov-box">
+            <div class="gov-icon"><i class="fa-solid fa-user-lock"></i></div>
+            <h3>1. Control del Investigador</h3>
+            <p>El IP del proyecto decide exactamente qué nivel de datos mostrar públicamente. Puede alternar entre visualización completa o <strong>Emparejamiento Ciego (Blind Matching)</strong>.</p>
+          </div>
+
+          <div class="gov-box">
+            <div class="gov-icon"><i class="fa-solid fa-file-contract"></i></div>
+            <h3>2. Acuerdos Pre-Estructurados (MTA / DTA)</h3>
+            <p>La plataforma ofrece plantillas estándar aprobadas para transferencia de muestras biolólgicas (MTA) y de datos fenotípicos/genómicos (DTA) para acelerar el proceso entre instituciones hospitalarias.</p>
+          </div>
+
+          <div class="gov-box">
+            <div class="gov-icon"><i class="fa-solid fa-pen-nib"></i></div>
+            <h3>3. Políticas de Coautoría Fair Sharing</h3>
+            <p>Se establece un marco transparente desde el primer contacto: contribución de cohortes ($N$ pacientes) o ensayos funcionales da derecho a posiciones de coautoría acordadas en la publicación final.</p>
+          </div>
+
+          <div class="gov-box">
+            <div class="gov-icon"><i class="fa-solid fa-network-wired"></i></div>
+            <h3>4. Estándar Internacional GA4GH</h3>
+            <p>Conexión y cumplimiento con las especificaciones del <strong>Matchmaker Exchange (MME)</strong> de la Global Alliance for Genomics and Health (GA4GH).</p>
+          </div>
+
+          <div class="gov-box">
+            <div class="gov-icon"><i class="fa-solid fa-key"></i></div>
+            <h3>5. Autenticación Académica ORCID</h3>
+            <p>Acceso restringido a profesionales de la salud e investigadores acreditados verificados mediante su perfil ORCID e institución hospitalaria/universitaria.</p>
+          </div>
+
+          <div class="gov-box">
+            <div class="gov-icon"><i class="fa-solid fa-hospital-user"></i></div>
+            <h3>6. Cumplimiento GDPR / LOPD</h3>
+            <p>Los datos compartidos son a nivel de proyecto y agregados fenotípicos/genotípicos sin identificadores directos de pacientes (cumplimiento estricto de bioética clínica).</p>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Project Detail Modal -->
+  <div class="modal-backdrop" id="project-modal">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 id="modal-gene-title">KCNQ2 - Caracterización Funcional</h3>
+        <button class="modal-close" id="modal-close-btn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body" id="modal-body-content">
+        <!-- Content inserted dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="modal-close-action">Cerrar</button>
+        <button class="btn btn-primary" id="modal-connect-btn"><i class="fa-solid fa-paper-plane"></i> Enviar Solicitud de Colaboración</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+/* ==========================================================================
+   ProjectMatcher - JavaScript Logic & Interactive Engine
+   ========================================================================== */
+
+let projectsData = [
+  {
+    id: 'proj-001',
+    gene: 'KCNQ2',
+    title: 'Caracterización funcional y clínica de variaciones missense en la poro-hélice de KCNQ2',
+    ip: 'Dr. Xavier Pujol',
+    institution: 'Hospital Sant Joan de Déu (SJD)',
+    region: 'catalonia',
+    email: 'xpujol@sjd.es',
+    github: 'https://github.com/pujol-genomics-sjd',
+    orcid: '0000-0002-1829-4011',
+    phone: '+34 932 804 000 (ext. 4210)',
+    mechanism: 'Gain-of-Function (GoF)',
+    hpoTerms: [
+      { code: 'HP:0001250', name: 'Seizures' },
+      { code: 'HP:0001263', name: 'Global developmental delay' },
+      { code: 'HP:0001290', name: 'Generalized hypotonia' }
+    ],
+    currentN: 6,
+    targetN: 15,
+    status: 'functional',
+    statusLabel: 'Validación Funcional en Curso',
+    models: ['Electrofisiología / Patch-clamp', 'Biobanco de Muestras de ADN / ARN', 'Líneas iPSC derivadas'],
+    description: 'Buscamos ampliar nuestra cohorte de pacientes con encefalopatía epiléptica asociada a KCNQ2 con variantes missense. Disponemos de ensayo de patch-clamp automatizado en ovocitos de Xenopus e iPSCs neurológicas.',
+    visibility: 'public'
+  },
+  {
+    id: 'proj-002',
+    gene: 'SYNGAP1',
+    title: 'Estudio transcriptor de haploinsuficiencia en SYNGAP1 y respuesta a moduladores moleculares',
+    ip: 'Dra. Elena Ramos',
+    institution: 'Hospital Universitari Vall d\'Hebron (HUVH)',
+    region: 'catalonia',
+    email: 'elena.ramos@vhir.org',
+    github: 'https://github.com/ramos-lab-vhir',
+    orcid: '0000-0001-9402-3318',
+    phone: '+34 934 893 000 (ext. 2501)',
+    mechanism: 'Loss-of-Function (LoF)',
+    hpoTerms: [
+      { code: 'HP:0000729', name: 'Autistic behavior' },
+      { code: 'HP:0001263', name: 'Global developmental delay' },
+      { code: 'HP:0001250', name: 'Seizures' }
+    ],
+    currentN: 9,
+    targetN: 20,
+    status: 'recruiting',
+    statusLabel: 'Reclutando Cohorte',
+    models: ['Modelos Animales (Ratón / Drosophila)', 'Organoides cerebrales'],
+    description: 'Proyecto enfocado en descifrar el espectro fenotípico de SYNGAP1 y validar tratamientos de lectura de codones de parada. Interesados en incorporar pacientes de hospitales catalanes e internacionales.',
+    visibility: 'public'
+  },
+  {
+    id: 'proj-003',
+    gene: 'SCN2A',
+    title: 'Canalopatía de Sodio Nav1.2: Correlación genotipo-fenotipo en epilepsias neonatales y tardías',
+    ip: 'Dr. Marc Soler',
+    institution: 'Institut d\'Investigació Biomèdica de Bellvitge (IDIBELL)',
+    region: 'catalonia',
+    email: 'msoler@idibell.cat',
+    github: 'https://github.com/soler-neuro-idibell',
+    orcid: '0000-0003-4410-8812',
+    phone: '+34 932 607 500',
+    mechanism: 'Unclear / Spectrum',
+    hpoTerms: [
+      { code: 'HP:0001250', name: 'Seizures' },
+      { code: 'HP:0002376', name: 'Developmental regression' }
+    ],
+    currentN: 4,
+    targetN: 12,
+    status: 'recruiting',
+    statusLabel: 'Reclutando Cohorte',
+    models: ['Electrofisiología / Patch-clamp', 'Simulación Estructural 3D'],
+    description: 'Identificación de mutaciones de ganancia vs pérdida de función en SCN2A para personalizar el tratamiento con bloqueadores de canales de sodio.',
+    visibility: 'public'
+  },
+  {
+    id: 'proj-004',
+    gene: 'STXBP1',
+    title: 'Mapeo sintomático y análisis de agregación proteica en encefalopatías STXBP1',
+    ip: 'Dra. Carme Font',
+    institution: 'Hospital Clínic / Universitat de Barcelona (UB)',
+    region: 'catalonia',
+    email: 'cfont@clinic.cat',
+    github: 'https://github.com/font-synapse-ub',
+    orcid: '0000-0002-8819-0014',
+    phone: '+34 932 275 400',
+    mechanism: 'Loss-of-Function (LoF)',
+    hpoTerms: [
+      { code: 'HP:0001250', name: 'Seizures' },
+      { code: 'HP:0001263', name: 'Global developmental delay' },
+      { code: 'HP:0002015', name: 'Dysphagia' }
+    ],
+    currentN: 5,
+    targetN: 15,
+    status: 'functional',
+    statusLabel: 'Validación Funcional en Curso',
+    models: ['Líneas iPSC derivadas', 'Biobanco de Muestras de ADN / ARN'],
+    description: 'Estudio pluricéntrico en marcha para caracterizar la exocitosis vesicular en neuronas humanas derivadas de iPSC de pacientes STXBP1.',
+    visibility: 'public'
+  },
+  {
+    id: 'proj-005',
+    gene: 'GRIN2A',
+    title: 'Variantes en receptores NMDA GluN2A: Espectro afasia-epilepsia y cohortes familiares',
+    ip: 'Dr. Jordi Vila',
+    institution: 'Institut de Recerca Sant Pau (IIB Sant Pau)',
+    region: 'catalonia',
+    email: 'jvila@santpau.cat',
+    github: 'https://github.com/jvila-santpau',
+    orcid: '0000-0001-7720-3341',
+    phone: '+34 935 565 600',
+    mechanism: 'Dominant Negative',
+    hpoTerms: [
+      { code: 'HP:0002167', name: 'Abnormal speech language development' },
+      { code: 'HP:0001250', name: 'Seizures' }
+    ],
+    currentN: 3,
+    targetN: 10,
+    status: 'manuscript',
+    statusLabel: 'Buscando Casos para Manuscrito',
+    models: ['Electrofisiología / Patch-clamp', 'Simulación Estructural 3D'],
+    description: 'Fase final de recopilación de datos fenotípicos y respuesta a memantina en pacientes GRIN2A para envío de manuscrito conjunto.',
+    visibility: 'public'
+  },
+  {
+    id: 'proj-006',
+    gene: 'MECP2',
+    title: 'Variantes atípicas no canónicas en MECP2 en varones y fenotipos leves femeninos',
+    ip: 'Dra. Sophie Laurent',
+    institution: 'Institut Imagine / Necker Hospital (París)',
+    region: 'international',
+    email: 'sophie.laurent@imagine.fr',
+    github: 'https://github.com/laurent-rett-imagine',
+    orcid: '0000-0002-9901-4412',
+    phone: '+33 1 44 49 40 00',
+    mechanism: 'Loss-of-Function (LoF)',
+    hpoTerms: [
+      { code: 'HP:0001263', name: 'Global developmental delay' },
+      { code: 'HP:0002376', name: 'Developmental regression' },
+      { code: 'HP:0000729', name: 'Autistic behavior' }
+    ],
+    currentN: 11,
+    targetN: 25,
+    status: 'recruiting',
+    statusLabel: 'Reclutando Cohorte',
+    models: ['Biobanco de Muestras de ADN / ARN', 'Modelos Animales (Ratón / Drosophila)'],
+    description: 'Red europea de búsqueda de casos raros de MECP2 sin criterios diagnósticos típicos de Rett. Abiertos a colaboración con grupos de Cataluña.',
+    visibility: 'public'
+  }
+];
+
+let currentSlide = 1;
+const totalSlides = 5;
+let activeTab = 'slides-tab';
+let selectedHpoChips = [
+  { code: 'HP:0001250', name: 'Seizures' },
+  { code: 'HP:0001263', name: 'Global developmental delay' }
+];
+
+document.addEventListener('DOMContentLoaded', () => {
+  initNavigation();
+  initSlideDeck();
+  renderProjectsGrid(projectsData);
+  initProjectForm();
+  initMatchSimulator();
+  initModalControls();
+  initThemeToggle();
+});
+
+function initNavigation() {
+  const navBtns = document.querySelectorAll('.nav-btn');
+  navBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tabId = btn.getAttribute('data-tab');
+      switchTab(tabId);
+    });
+  });
+}
+
+function switchTab(tabId) {
+  activeTab = tabId;
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    if (btn.getAttribute('data-tab') === tabId) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+
+  document.querySelectorAll('.tab-pane').forEach(pane => {
+    if (pane.id === tabId) {
+      pane.classList.add('active');
+    } else {
+      pane.classList.remove('active');
+    }
+  });
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function initSlideDeck() {
+  const prevBtn = document.getElementById('prev-slide');
+  const nextBtn = document.getElementById('next-slide');
+  const indicatorsContainer = document.getElementById('slide-indicators');
+  const fullscreenBtn = document.getElementById('fullscreen-slide');
+
+  indicatorsContainer.innerHTML = '';
+  for (let i = 1; i <= totalSlides; i++) {
+    const dot = document.createElement('div');
+    dot.className = `slide-dot ${i === 1 ? 'active' : ''}`;
+    dot.addEventListener('click', () => goToSlide(i));
+    indicatorsContainer.appendChild(dot);
+  }
+
+  prevBtn.addEventListener('click', () => goToSlide(currentSlide - 1));
+  nextBtn.addEventListener('click', () => goToSlide(currentSlide + 1));
+
+  fullscreenBtn.addEventListener('click', () => {
+    const slideElem = document.getElementById('slide-container');
+    if (!document.fullscreenElement) {
+      slideElem.requestFullscreen().catch(err => alert(`Error activando pantalla completa: ${err.message}`));
+    } else {
+      document.exitFullscreen();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (activeTab !== 'slides-tab') return;
+    if (e.key === 'ArrowLeft') {
+      goToSlide(currentSlide - 1);
+    } else if (e.key === 'ArrowRight') {
+      goToSlide(currentSlide + 1);
+    }
+  });
+}
+
+function goToSlide(slideNum) {
+  if (slideNum < 1) slideNum = 1;
+  if (slideNum > totalSlides) slideNum = totalSlides;
+
+  currentSlide = slideNum;
+
+  document.querySelectorAll('.slide').forEach(slide => {
+    if (parseInt(slide.getAttribute('data-slide')) === currentSlide) {
+      slide.classList.add('active');
+    } else {
+      slide.classList.remove('active');
+    }
+  });
+
+  const dots = document.querySelectorAll('.slide-dot');
+  dots.forEach((dot, idx) => {
+    if (idx + 1 === currentSlide) {
+      dot.classList.add('active');
+    } else {
+      dot.classList.remove('active');
+    }
+  });
+}
+
+function renderProjectsGrid(projects) {
+  const grid = document.getElementById('projects-grid');
+  grid.innerHTML = '';
+
+  document.getElementById('stat-total-projects').textContent = projects.length;
+  const totalN = projects.reduce((acc, p) => acc + p.currentN, 0);
+  document.getElementById('stat-total-patients').textContent = totalN;
+
+  if (projects.length === 0) {
+    grid.innerHTML = `
+      <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px dashed var(--border-color);">
+        <i class="fa-solid fa-folder-open" style="font-size: 2.5rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+        <h3>No se encontraron proyectos con los filtros seleccionados</h3>
+        <p style="color: var(--text-secondary); margin-top: 0.5rem;">Intenta cambiar los parámetros de búsqueda o limpiar los filtros.</p>
+      </div>
+    `;
+    return;
+  }
+
+  projects.forEach(p => {
+    const progressPercent = Math.min(Math.round((p.currentN / p.targetN) * 100), 100);
+
+    let statusClass = 'status-recruiting';
+    if (p.status === 'functional') statusClass = 'status-functional';
+    if (p.status === 'manuscript') statusClass = 'status-manuscript';
+
+    const card = document.createElement('div');
+    card.className = 'project-card';
+    card.innerHTML = `
+      <div>
+        <div class="project-card-header">
+          <span class="gene-badge">${p.gene}</span>
+          <span class="status-badge ${statusClass}">${p.statusLabel}</span>
+        </div>
+        <h3 class="project-title">${p.title}</h3>
+        <p class="project-institution">
+          <i class="fa-solid fa-hospital-user color-primary"></i> ${p.institution} (${p.ip})
+        </p>
+      </div>
+
+      <div class="cohort-progress-container">
+        <div class="cohort-progress-label">
+          <span>Progreso Cohorte ($N$):</span>
+          <span><strong>${p.currentN}</strong> / ${p.targetN} pacientes (${progressPercent}%)</span>
+        </div>
+        <div class="cohort-progress-bar">
+          <div class="cohort-progress-fill" style="width: ${progressPercent}%;"></div>
+        </div>
+      </div>
+
+      <div class="hpo-tags-wrapper">
+        ${p.hpoTerms.map(h => `<span class="hpo-tag">${h.code} ${h.name}</span>`).join('')}
+      </div>
+
+      <div class="card-actions">
+        <button class="btn btn-secondary full-width" onclick="openProjectModal('${p.id}')">
+          <i class="fa-solid fa-address-card"></i> Ver Contacto Directo del IP
+        </button>
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+
+  setupFilters();
+}
+
+function setupFilters() {
+  const searchGene = document.getElementById('search-gene');
+  const filterRegion = document.getElementById('filter-region');
+  const filterStatus = document.getElementById('filter-status');
+  const filterHpo = document.getElementById('filter-hpo');
+  const resetBtn = document.getElementById('reset-filters');
+
+  const applyFilters = () => {
+    const geneVal = searchGene.value.trim().toLowerCase();
+    const regionVal = filterRegion.value;
+    const statusVal = filterStatus.value;
+    const hpoVal = filterHpo.value;
+
+    const filtered = projectsData.filter(p => {
+      if (geneVal && !p.gene.toLowerCase().includes(geneVal) && !p.title.toLowerCase().includes(geneVal)) {
+        return false;
+      }
+      if (regionVal !== 'all' && p.region !== regionVal) {
+        return false;
+      }
+      if (statusVal !== 'all' && p.status !== statusVal) {
+        return false;
+      }
+      if (hpoVal !== 'all') {
+        const hasHpo = p.hpoTerms.some(h => {
+          if (hpoVal === 'seizures') return h.code === 'HP:0001250';
+          if (hpoVal === 'delay') return h.code === 'HP:0001263';
+          if (hpoVal === 'autism') return h.code === 'HP:0000729';
+          if (hpoVal === 'hypotonia') return h.code === 'HP:0001290';
+          return true;
+        });
+        if (!hasHpo) return false;
+      }
+      return true;
+    });
+
+    renderProjectsGrid(filtered);
+  };
+
+  searchGene.removeEventListener('input', applyFilters);
+  searchGene.addEventListener('input', applyFilters);
+
+  filterRegion.removeEventListener('change', applyFilters);
+  filterRegion.addEventListener('change', applyFilters);
+
+  filterStatus.removeEventListener('change', applyFilters);
+  filterStatus.addEventListener('change', applyFilters);
+
+  filterHpo.removeEventListener('change', applyFilters);
+  filterHpo.addEventListener('change', applyFilters);
+
+  resetBtn.addEventListener('click', () => {
+    searchGene.value = '';
+    filterRegion.value = 'all';
+    filterStatus.value = 'all';
+    filterHpo.value = 'all';
+    renderProjectsGrid(projectsData);
+  });
+}
+
+function initProjectForm() {
+  const form = document.getElementById('new-project-form');
+  const addHpoBtn = document.getElementById('add-hpo-btn');
+  const hpoInput = document.getElementById('hpo-search-input');
+  const chipsContainer = document.getElementById('hpo-chips');
+
+  renderHpoChips();
+
+  addHpoBtn.addEventListener('click', () => {
+    const val = hpoInput.value.trim();
+    if (!val) return;
+    
+    let code = 'HP:0000000';
+    let name = val;
+    if (val.includes('HP:')) {
+      const parts = val.split(' ');
+      code = parts[0];
+      name = parts.slice(1).join(' ') || code;
+    }
+
+    selectedHpoChips.push({ code, name });
+    hpoInput.value = '';
+    renderHpoChips();
+  });
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const gene = document.getElementById('input-gene').value.trim().toUpperCase();
+    const title = document.getElementById('input-title').value.trim();
+    const ip = document.getElementById('input-ip-name').value.trim();
+    const institution = document.getElementById('input-institution').value.trim();
+    const email = document.getElementById('input-email').value.trim();
+    const region = document.getElementById('input-region').value;
+    const mechanism = document.getElementById('input-mechanism').value;
+    const currentN = parseInt(document.getElementById('input-current-n').value) || 1;
+    const targetN = parseInt(document.getElementById('input-target-n').value) || 10;
+    const status = document.getElementById('input-status').value;
+    const description = document.getElementById('input-description').value.trim();
+    const visibility = document.querySelector('input[name="visibility"]:checked').value;
+
+    const selectedModels = [];
+    document.querySelectorAll('input[name="models"]:checked').forEach(cb => {
+      selectedModels.push(cb.value);
+    });
+
+    let statusLabel = 'Reclutando Cohorte';
+    if (status === 'functional') statusLabel = 'Validación Funcional en Curso';
+    if (status === 'manuscript') statusLabel = 'Buscando Casos para Manuscrito';
+
+    // Check if a project already exists for this gene
+    const existingMatch = projectsData.find(p => p.gene.toUpperCase() === gene);
+
+    const saveAndPublish = () => {
+      const newProject = {
+        id: `proj-${Date.now()}`,
+        gene,
+        title,
+        ip,
+        institution,
+        region,
+        email,
+        github: `https://github.com/${ip.toLowerCase().replace(/[^a-z]/g, '')}-lab`,
+        orcid: '0000-0002-0000-0000',
+        phone: '+34 930 000 000',
+        mechanism,
+        hpoTerms: [...selectedHpoChips],
+        currentN,
+        targetN,
+        status,
+        statusLabel,
+        models: selectedModels,
+        description,
+        visibility
+      };
+
+      projectsData.unshift(newProject);
+      form.reset();
+      selectedHpoChips = [
+        { code: 'HP:0001250', name: 'Seizures' },
+        { code: 'HP:0001263', name: 'Global developmental delay' }
+      ];
+      renderHpoChips();
+      renderProjectsGrid(projectsData);
+      switchTab('explorer-tab');
+    };
+
+    if (existingMatch) {
+      const confirmDirect = confirm(
+        `⚡ ¡COINCIDENCIA DETECTADA EN TIMEPO REAL!\n\n` +
+        `Ya existe un proyecto activo para el gen "${gene}" publicado por:\n` +
+        `• IP: ${existingMatch.ip}\n` +
+        `• Institución: ${existingMatch.institution}\n` +
+        `• Correo: ${existingMatch.email}\n` +
+        `• Cohorte actual: N=${existingMatch.currentN} pacientes\n\n` +
+        `¿Deseas VER LOS DATOS DE CONTACTO DIRECTO de este investigador para unificar cohortes antes de publicar?\n\n` +
+        `[Aceptar] = Ver Ficha de Contacto Directo del IP\n` +
+        `[Cancelar] = Publicar mi proyecto de todos modos`
+      );
+
+      if (confirmDirect) {
+        // Open modal of the existing project
+        openProjectModal(existingMatch.id);
+        return;
+      }
+    }
+
+    saveAndPublish();
+    alert(`¡Proyecto en ${gene} publicado con éxito! Cualquier investigador podrá ver tus datos de contacto directamente.`);
+  });
+
+  // Live Input Gene Overlap Detector
+  const geneInput = document.getElementById('input-gene');
+  if (geneInput) {
+    geneInput.addEventListener('input', () => {
+      const val = geneInput.value.trim().toUpperCase();
+      const existing = projectsData.find(p => p.gene.toUpperCase() === val);
+      let matchInfo = document.getElementById('gene-match-live-hint');
+      
+      if (!matchInfo) {
+        matchInfo = document.createElement('div');
+        matchInfo.id = 'gene-match-live-hint';
+        matchInfo.style.cssText = 'font-size: 0.82rem; margin-top: 0.35rem; padding: 0.4rem 0.75rem; border-radius: 6px; font-weight: 600; display: none;';
+        geneInput.parentNode.appendChild(matchInfo);
+      }
+
+      if (existing) {
+        matchInfo.style.display = 'block';
+        matchInfo.style.background = 'rgba(217, 119, 6, 0.12)';
+        matchInfo.style.border = '1px solid rgba(217, 119, 6, 0.3)';
+        matchInfo.style.color = '#D97706';
+        matchInfo.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> <strong>¡Cohorte Existente!</strong> ${existing.institution} (${existing.ip}) tiene N=${existing.currentN} pacientes en ${val}.`;
+      } else {
+        matchInfo.style.display = 'none';
+      }
+    });
+  }
+}
+
+function renderHpoChips() {
+  const container = document.getElementById('hpo-chips');
+  container.innerHTML = '';
+
+  selectedHpoChips.forEach((chip, index) => {
+    const chipElem = document.createElement('span');
+    chipElem.className = 'hpo-chip';
+    chipElem.innerHTML = `
+      ${chip.code} ${chip.name}
+      <i class="fa-solid fa-xmark remove-chip" onclick="removeHpoChip(${index})"></i>
+    `;
+    container.appendChild(chipElem);
+  });
+}
+
+function removeHpoChip(index) {
+  selectedHpoChips.splice(index, 1);
+  renderHpoChips();
+}
+
+function initMatchSimulator() {
+  const runBtn = document.getElementById('run-match-btn');
+  runBtn.addEventListener('click', runMatchSimulation);
+  runMatchSimulation();
+}
+
+function runMatchSimulation() {
+  const queryGene = document.getElementById('sim-gene').value.trim().toUpperCase();
+  const queryMech = document.getElementById('sim-mechanism').value;
+  const queryHpo = document.getElementById('sim-hpo').value;
+
+  const resultsList = document.getElementById('results-list');
+  resultsList.innerHTML = '';
+
+  const scoredProjects = projectsData.map(p => {
+    let score = 0;
+    let breakdown = { gene: 0, hpo: 0, mech: 0 };
+
+    if (p.gene.toUpperCase() === queryGene) {
+      score += 40;
+      breakdown.gene = 100;
+    } else {
+      breakdown.gene = 0;
+    }
+
+    const hasQueryHpo = p.hpoTerms.some(h => h.code === queryHpo);
+    if (hasQueryHpo) {
+      score += 30;
+      breakdown.hpo = 100;
+    } else {
+      score += 15;
+      breakdown.hpo = 50;
+    }
+
+    if (p.mechanism === queryMech) {
+      score += 20;
+      breakdown.mech = 100;
+    } else {
+      score += 10;
+      breakdown.mech = 50;
+    }
+
+    score += 10;
+
+    return { project: p, score: Math.round(score), breakdown };
+  });
+
+  scoredProjects.sort((a, b) => b.score - a.score);
+
+  document.getElementById('results-count').textContent = scoredProjects.length;
+
+  scoredProjects.forEach(item => {
+    const p = item.project;
+    const resultCard = document.createElement('div');
+    resultCard.className = 'result-item';
+    resultCard.innerHTML = `
+      <div class="match-score-pill">
+        ${item.score}%
+        <span>MATCH</span>
+      </div>
+
+      <div class="result-info">
+        <div class="result-gene-title">
+          <span class="gene-badge" style="font-size: 0.95rem;">${p.gene}</span>
+          <strong>${p.title}</strong>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--text-secondary);">
+          <i class="fa-solid fa-hospital"></i> ${p.institution} (${p.ip}) | Contacto: <strong>${p.email}</strong>
+        </p>
+        <div class="result-breakdown">
+          <span><i class="fa-solid fa-dna color-primary"></i> Gen Match: ${item.breakdown.gene}%</span>
+          <span><i class="fa-solid fa-notes-medical color-cyan"></i> HPO Score: ${item.breakdown.hpo}%</span>
+          <span><i class="fa-solid fa-gears color-warning"></i> Mecanismo: ${item.breakdown.mech}%</span>
+        </div>
+      </div>
+
+      <div>
+        <button class="btn btn-primary" onclick="openProjectModal('${p.id}')">
+          <i class="fa-solid fa-address-card"></i> Ver Contacto IP
+        </button>
+      </div>
+    `;
+
+    resultsList.appendChild(resultCard);
+  });
+}
+
+function initModalControls() {
+  const modal = document.getElementById('project-modal');
+  const closeBtn = document.getElementById('modal-close-btn');
+  const closeAction = document.getElementById('modal-close-action');
+
+  const closeModal = () => modal.classList.remove('active');
+
+  closeBtn.addEventListener('click', closeModal);
+  closeAction.addEventListener('click', closeModal);
+  
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+}
+
+function openProjectModal(projectId) {
+  const p = projectsData.find(item => item.id === projectId);
+  if (!p) return;
+
+  const modal = document.getElementById('project-modal');
+  document.getElementById('modal-gene-title').textContent = `${p.gene} - ${p.title}`;
+
+  const body = document.getElementById('modal-body-content');
+  const progressPercent = Math.min(Math.round((p.currentN / p.targetN) * 100), 100);
+
+  const mailtoUrl = `mailto:${p.email}?subject=${encodeURIComponent(`[ColabHunter] Interés en Colaboración para proyecto ${p.gene}`)}&body=${encodeURIComponent(`Estimado/a ${p.ip},\n\nHe visto su proyecto en ColabHunter sobre el gen ${p.gene} ("${p.title}") y me gustaría ponerme en contacto para explorar una posible colaboración o unificación de cohortes.\n\nAtentamente,`)}`;
+
+  body.innerHTML = `
+    <div style="display: flex; gap: 1rem; align-items: center; background: rgba(99, 102, 241, 0.1); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid rgba(99, 102, 241, 0.3);">
+      <span class="gene-badge" style="font-size: 1.5rem;">${p.gene}</span>
+      <div>
+        <strong style="font-size: 1.15rem; display: block;">${p.title}</strong>
+        <span style="font-size: 0.9rem; color: var(--text-secondary);"><i class="fa-solid fa-user-doctor color-primary"></i> ${p.ip} — ${p.institution}</span>
+      </div>
+    </div>
+
+    <!-- TARJETA DE CONTACTO DIRECTO DE IP -->
+    <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%); border: 1px solid rgba(16, 185, 129, 0.4); padding: 1.25rem; border-radius: var(--radius-lg); display: flex; flex-direction: column; gap: 0.75rem;">
+      <h4 style="font-size: 1rem; color: var(--accent-teal); display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fa-solid fa-address-card"></i> Contacto Directo del Investigador Principal
+      </h4>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.9rem;">
+        <div>
+          <strong style="color: var(--text-muted); display: block; font-size: 0.78rem; text-transform: uppercase;">Correo Electrónico:</strong>
+          <a href="${mailtoUrl}" style="color: var(--accent-cyan); font-weight: 700; text-decoration: none;">
+            <i class="fa-solid fa-envelope"></i> ${p.email}
+          </a>
+        </div>
+        <div>
+          <strong style="color: var(--text-muted); display: block; font-size: 0.78rem; text-transform: uppercase;">Perfil GitHub / Lab:</strong>
+          <a href="${p.github}" target="_blank" style="color: var(--accent-primary); font-weight: 600; text-decoration: none;">
+            <i class="fa-brands fa-github"></i> ${p.github.replace('https://', '')}
+          </a>
+        </div>
+        <div>
+          <strong style="color: var(--text-muted); display: block; font-size: 0.78rem; text-transform: uppercase;">ORCID iD:</strong>
+          <span style="font-family: var(--font-code); color: var(--text-primary);">
+            <i class="fa-brands fa-orcid color-success"></i> ${p.orcid}
+          </span>
+        </div>
+        <div>
+          <strong style="color: var(--text-muted); display: block; font-size: 0.78rem; text-transform: uppercase;">Teléfono Directo:</strong>
+          <span style="color: var(--text-primary); font-weight: 600;">
+            <i class="fa-solid fa-phone"></i> ${p.phone}
+          </span>
+        </div>
+      </div>
+      
+      <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+        <a href="${mailtoUrl}" class="btn btn-primary" style="flex: 1; text-decoration: none;">
+          <i class="fa-solid fa-paper-plane"></i> Enviar Email Directo
+        </a>
+        <button class="btn btn-secondary" onclick="navigator.clipboard.writeText('${p.email}'); alert('Email de ${p.ip} (${p.email}) copiado al portapapeles.');">
+          <i class="fa-solid fa-copy"></i> Copiar Email
+        </button>
+      </div>
+    </div>
+
+    <div>
+      <h4 style="font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--accent-primary);">Progreso de la Cohorte de Pacientes:</h4>
+      <div class="cohort-progress-container">
+        <div class="cohort-progress-label">
+          <span>Reclutamiento Actual:</span>
+          <span><strong>${p.currentN}</strong> / ${p.targetN} Pacientes Caracterizados (${progressPercent}%)</span>
+        </div>
+        <div class="cohort-progress-bar" style="height: 12px;">
+          <div class="cohort-progress-fill" style="width: ${progressPercent}%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+      <div style="background: var(--bg-secondary); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+        <strong style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase;">Mecanismo Mutacional:</strong>
+        <p style="font-size: 0.95rem; font-weight: 600; color: var(--accent-cyan); margin-top: 0.2rem;">${p.mechanism}</p>
+      </div>
+
+      <div style="background: var(--bg-secondary); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+        <strong style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase;">Estado del Proyecto:</strong>
+        <p style="font-size: 0.95rem; font-weight: 600; color: var(--accent-teal); margin-top: 0.2rem;">${p.statusLabel}</p>
+      </div>
+    </div>
+
+    <div>
+      <h4 style="font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--accent-primary);">Fenotipo HPO Registrado:</h4>
+      <div class="hpo-tags-wrapper">
+        ${p.hpoTerms.map(h => `<span class="hpo-chip">${h.code} ${h.name}</span>`).join('')}
+      </div>
+    </div>
+
+    <div>
+      <h4 style="font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--accent-primary);">Modelos & Ensayos en el Laboratorio:</h4>
+      <ul style="list-style: disc; padding-left: 1.2rem; font-size: 0.9rem; color: var(--text-secondary);">
+        ${p.models.map(m => `<li>${m}</li>`).join('')}
+      </ul>
+    </div>
+
+    <div>
+      <h4 style="font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--accent-primary);">Resumen & Criterios de Inclusión:</h4>
+      <p style="font-size: 0.9rem; color: var(--text-secondary); background: var(--bg-secondary); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+        ${p.description}
+      </p>
+    </div>
+  `;
+
+  // Update modal connect action to mailto
+  const modalConnectBtn = document.getElementById('modal-connect-btn');
+  if (modalConnectBtn) {
+    modalConnectBtn.style.display = 'none'; // Replaced by direct contact card
+  }
+
+  modal.classList.add('active');
+}
+
+function initThemeToggle() {
+  const toggleBtn = document.getElementById('theme-toggle');
+  toggleBtn.addEventListener('click', () => {
+    document.body.classList.toggle('light-theme');
+    const isLight = document.body.classList.contains('light-theme');
+    toggleBtn.innerHTML = isLight ? '<i class="fa-solid fa-moon"></i>' : '<i class="fa-solid fa-sun"></i>';
+  });
+}
+  </script>
+</body>
+</html>
+  </script>
+</body>
+</html>
