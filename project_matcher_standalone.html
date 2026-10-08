@@ -1980,7 +1980,8 @@ input:focus, select:focus, textarea:focus {
    ProjectMatcher - JavaScript Logic & Interactive Engine
    ========================================================================== */
 
-let projectsData = [
+// Default Initial Demo Dataset (for testing)
+const defaultDemoProjects = [
   {
     id: 'proj-001',
     gene: 'KCNQ2',
@@ -2030,106 +2031,32 @@ let projectsData = [
     models: ['Modelos Animales (Ratón / Drosophila)', 'Organoides cerebrales'],
     description: 'Proyecto enfocado en descifrar el espectro fenotípico de SYNGAP1 y validar tratamientos de lectura de codones de parada. Interesados en incorporar pacientes de hospitales catalanes e internacionales.',
     visibility: 'public'
-  },
-  {
-    id: 'proj-003',
-    gene: 'SCN2A',
-    title: 'Canalopatía de Sodio Nav1.2: Correlación genotipo-fenotipo en epilepsias neonatales y tardías',
-    ip: 'Dr. Marc Soler',
-    institution: 'Institut d\'Investigació Biomèdica de Bellvitge (IDIBELL)',
-    region: 'catalonia',
-    email: 'msoler@idibell.cat',
-    github: 'https://github.com/soler-neuro-idibell',
-    orcid: '0000-0003-4410-8812',
-    phone: '+34 932 607 500',
-    mechanism: 'Unclear / Spectrum',
-    hpoTerms: [
-      { code: 'HP:0001250', name: 'Seizures' },
-      { code: 'HP:0002376', name: 'Developmental regression' }
-    ],
-    currentN: 4,
-    targetN: 12,
-    status: 'recruiting',
-    statusLabel: 'Reclutando Cohorte',
-    models: ['Electrofisiología / Patch-clamp', 'Simulación Estructural 3D'],
-    description: 'Identificación de mutaciones de ganancia vs pérdida de función en SCN2A para personalizar el tratamiento con bloqueadores de canales de sodio.',
-    visibility: 'public'
-  },
-  {
-    id: 'proj-004',
-    gene: 'STXBP1',
-    title: 'Mapeo sintomático y análisis de agregación proteica en encefalopatías STXBP1',
-    ip: 'Dra. Carme Font',
-    institution: 'Hospital Clínic / Universitat de Barcelona (UB)',
-    region: 'catalonia',
-    email: 'cfont@clinic.cat',
-    github: 'https://github.com/font-synapse-ub',
-    orcid: '0000-0002-8819-0014',
-    phone: '+34 932 275 400',
-    mechanism: 'Loss-of-Function (LoF)',
-    hpoTerms: [
-      { code: 'HP:0001250', name: 'Seizures' },
-      { code: 'HP:0001263', name: 'Global developmental delay' },
-      { code: 'HP:0002015', name: 'Dysphagia' }
-    ],
-    currentN: 5,
-    targetN: 15,
-    status: 'functional',
-    statusLabel: 'Validación Funcional en Curso',
-    models: ['Líneas iPSC derivadas', 'Biobanco de Muestras de ADN / ARN'],
-    description: 'Estudio pluricéntrico en marcha para caracterizar la exocitosis vesicular en neuronas humanas derivadas de iPSC de pacientes STXBP1.',
-    visibility: 'public'
-  },
-  {
-    id: 'proj-005',
-    gene: 'GRIN2A',
-    title: 'Variantes en receptores NMDA GluN2A: Espectro afasia-epilepsia y cohortes familiares',
-    ip: 'Dr. Jordi Vila',
-    institution: 'Institut de Recerca Sant Pau (IIB Sant Pau)',
-    region: 'catalonia',
-    email: 'jvila@santpau.cat',
-    github: 'https://github.com/jvila-santpau',
-    orcid: '0000-0001-7720-3341',
-    phone: '+34 935 565 600',
-    mechanism: 'Dominant Negative',
-    hpoTerms: [
-      { code: 'HP:0002167', name: 'Abnormal speech language development' },
-      { code: 'HP:0001250', name: 'Seizures' }
-    ],
-    currentN: 3,
-    targetN: 10,
-    status: 'manuscript',
-    statusLabel: 'Buscando Casos para Manuscrito',
-    models: ['Electrofisiología / Patch-clamp', 'Simulación Estructural 3D'],
-    description: 'Fase final de recopilación de datos fenotípicos y respuesta a memantina en pacientes GRIN2A para envío de manuscrito conjunto.',
-    visibility: 'public'
-  },
-  {
-    id: 'proj-006',
-    gene: 'MECP2',
-    title: 'Variantes atípicas no canónicas en MECP2 en varones y fenotipos leves femeninos',
-    ip: 'Dra. Sophie Laurent',
-    institution: 'Institut Imagine / Necker Hospital (París)',
-    region: 'international',
-    email: 'sophie.laurent@imagine.fr',
-    github: 'https://github.com/laurent-rett-imagine',
-    orcid: '0000-0002-9901-4412',
-    phone: '+33 1 44 49 40 00',
-    mechanism: 'Loss-of-Function (LoF)',
-    hpoTerms: [
-      { code: 'HP:0001263', name: 'Global developmental delay' },
-      { code: 'HP:0002376', name: 'Developmental regression' },
-      { code: 'HP:0000729', name: 'Autistic behavior' }
-    ],
-    currentN: 11,
-    targetN: 25,
-    status: 'recruiting',
-    statusLabel: 'Reclutando Cohorte',
-    models: ['Biobanco de Muestras de ADN / ARN', 'Modelos Animales (Ratón / Drosophila)'],
-    description: 'Red europea de búsqueda de casos raros de MECP2 sin criterios diagnósticos típicos de Rett. Abiertos a colaboración con grupos de Cataluña.',
-    visibility: 'public'
   }
 ];
+
+// Load from localStorage if present, or start with demo projects
+let storedProjects = localStorage.getItem('colabhunter_projects');
+let projectsData = storedProjects ? JSON.parse(storedProjects) : [...defaultDemoProjects];
+
+function saveProjectsToStorage() {
+  localStorage.setItem('colabhunter_projects', JSON.stringify(projectsData));
+}
+
+function clearAllProjects() {
+  if (confirm('¿Estás seguro de que quieres VACIAR la lista y empezar de 0?')) {
+    projectsData = [];
+    saveProjectsToStorage();
+    renderProjectsGrid(projectsData);
+    alert('La base de datos de proyectos se ha vaciado. Ahora está en 0 para tus pruebas.');
+  }
+}
+
+function loadDemoProjects() {
+  projectsData = JSON.parse(JSON.stringify(defaultDemoProjects));
+  saveProjectsToStorage();
+  renderProjectsGrid(projectsData);
+  alert('Se han cargado los proyectos de prueba por defecto.');
+}
 
 let currentSlide = 1;
 const totalSlides = 5;
