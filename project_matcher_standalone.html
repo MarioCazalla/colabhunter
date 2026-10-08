@@ -2041,9 +2041,9 @@ const defaultDemoProjects = [
 let storedProjects = localStorage.getItem('colabhunter_projects');
 let projectsData = storedProjects ? JSON.parse(storedProjects) : [...defaultDemoProjects];
 
-// Supabase Cloud Configuration (Can be configured via UI or environment)
+// Supabase Cloud Configuration (Configured)
 let supabaseUrl = localStorage.getItem('colabhunter_supabase_url') || '';
-let supabaseKey = localStorage.getItem('colabhunter_supabase_key') || '';
+let supabaseKey = localStorage.getItem('colabhunter_supabase_key') || 'sb_publishable_Otxdl-UMR8B2YugKYpebUQ_v1n9_jXy';
 let supabaseClient = null;
 
 function initSupabase() {
