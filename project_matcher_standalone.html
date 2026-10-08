@@ -11,6 +11,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
+  <!-- Supabase JS Client SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
   <style>
 /* ==========================================================================
    ProjectMatcher - CSS Design System & Theme Styling
@@ -2038,6 +2041,105 @@ const defaultDemoProjects = [
 let storedProjects = localStorage.getItem('colabhunter_projects');
 let projectsData = storedProjects ? JSON.parse(storedProjects) : [...defaultDemoProjects];
 
+// Supabase Cloud Configuration (Can be configured via UI or environment)
+let supabaseUrl = localStorage.getItem('colabhunter_supabase_url') || '';
+let supabaseKey = localStorage.getItem('colabhunter_supabase_key') || '';
+let supabaseClient = null;
+
+function initSupabase() {
+  if (window.supabase && supabaseUrl && supabaseKey) {
+    try {
+      supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+      console.log('✅ Supabase Cloud Database Connected!');
+    } catch (e) {
+      console.warn('Supabase initialization failed:', e);
+    }
+  }
+}
+
+async function fetchProjectsFromCloud() {
+  if (!supabaseClient) return false;
+  try {
+    const { data, error } = await supabaseClient.from('projects').select('*').order('created_at', { ascending: false });
+    if (!error && data && data.length >= 0) {
+      projectsData = data.map(dbItem => ({
+        id: dbItem.id,
+        gene: dbItem.gene,
+        title: dbItem.title,
+        ip: dbItem.ip,
+        institution: dbItem.institution,
+        region: dbItem.region,
+        email: dbItem.email,
+        github: dbItem.github,
+        orcid: dbItem.orcid,
+        phone: dbItem.phone,
+        mechanism: dbItem.mechanism,
+        hpoTerms: typeof dbItem.hpo_terms === 'string' ? JSON.parse(dbItem.hpo_terms) : (dbItem.hpo_terms || []),
+        currentN: dbItem.current_n,
+        targetN: dbItem.target_n,
+        status: dbItem.status,
+        statusLabel: dbItem.status_label,
+        models: typeof dbItem.models === 'string' ? JSON.parse(dbItem.models) : (dbItem.models || []),
+        description: dbItem.description,
+        visibility: dbItem.visibility
+      }));
+      saveProjectsToStorage();
+      renderProjectsGrid(projectsData);
+      return true;
+    }
+  } catch (err) {
+    console.warn('Cloud fetch error, using local data:', err);
+  }
+  return false;
+}
+
+async function saveProjectToCloud(project) {
+  if (!supabaseClient) return;
+  try {
+    const dbPayload = {
+      id: project.id,
+      gene: project.gene,
+      title: project.title,
+      ip: project.ip,
+      institution: project.institution,
+      region: project.region,
+      email: project.email,
+      github: project.github,
+      orcid: project.orcid,
+      phone: project.phone,
+      mechanism: project.mechanism,
+      hpo_terms: project.hpoTerms,
+      current_n: project.currentN,
+      target_n: project.targetN,
+      status: project.status,
+      status_label: project.statusLabel,
+      models: project.models,
+      description: project.description,
+      visibility: project.visibility
+    };
+    const { error } = await supabaseClient.from('projects').insert([dbPayload]);
+    if (error) console.error('Cloud insert error:', error);
+  } catch (err) {
+    console.error('Failed to insert project into Supabase:', err);
+  }
+}
+
+function configureSupabaseKeys() {
+  const url = prompt('Introduce tu Supabase Project URL (ej. https://xyz.supabase.co):', supabaseUrl);
+  if (url === null) return;
+  const key = prompt('Introduce tu Supabase Anon Key (API Key pública):', supabaseKey);
+  if (key === null) return;
+
+  supabaseUrl = url.trim();
+  supabaseKey = key.trim();
+  localStorage.setItem('colabhunter_supabase_url', supabaseUrl);
+  localStorage.setItem('colabhunter_supabase_key', supabaseKey);
+
+  initSupabase();
+  fetchProjectsFromCloud();
+  alert('Conexión con Supabase Cloud configurada correctamente.');
+}
+
 function saveProjectsToStorage() {
   localStorage.setItem('colabhunter_projects', JSON.stringify(projectsData));
 }
@@ -2066,10 +2168,14 @@ let selectedHpoChips = [
   { code: 'HP:0001263', name: 'Global developmental delay' }
 ];
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   initNavigation();
   initSlideDeck();
-  renderProjectsGrid(projectsData);
+  initSupabase();
+  const loadedCloud = await fetchProjectsFromCloud();
+  if (!loadedCloud) {
+    renderProjectsGrid(projectsData);
+  }
   initProjectForm();
   initMatchSimulator();
   initModalControls();
@@ -2371,6 +2477,8 @@ function initProjectForm() {
       };
 
       projectsData.unshift(newProject);
+      saveProjectsToStorage();
+      saveProjectToCloud(newProject);
       form.reset();
       selectedHpoChips = [
         { code: 'HP:0001250', name: 'Seizures' },
