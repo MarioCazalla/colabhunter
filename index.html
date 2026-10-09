@@ -1732,30 +1732,60 @@ input:focus, select:focus, textarea:focus {
         <div class="publish-card">
           <div class="publish-header">
             <h2><i class="fa-solid fa-folder-plus"></i> Registrar un Nuevo Proyecto de Investigación</h2>
-            <p>Publica los detalles de tu gen de interés y cohorte para conectar con otros investigadores a nivel mundial.</p>
+            <p>Publica los detalles de tu gen de interés. Únicamente el gen es obligatorio; el resto de datos se autocompletarán de tu perfil o son opcionales.</p>
           </div>
 
           <form id="new-project-form" class="project-form">
+
+            <div style="background: var(--color-primary-light); padding: 0.85rem 1.25rem; border-radius: var(--radius-md); border: 1px solid rgba(37,99,235,0.2); margin-bottom: 1rem;">
+              <p style="font-size: 0.9rem; color: var(--color-primary); font-weight: 600;">
+                <i class="fa-solid fa-circle-info"></i> El único campo obligatorio es el <strong>Gen de Interés</strong>. El resto de datos se autocompletará o es opcional.
+              </p>
+            </div>
             
-            <!-- Step 1: Investigador e Institución -->
+            <!-- Step 1: Gen (Obligatorio) y Título -->
             <div class="form-section">
-              <h3><span class="section-num">1</span> Investigador Principal & Institución</h3>
+              <h3><span class="section-num">1</span> Datos Genómicos (Obligatorio)</h3>
               <div class="grid-2col-inputs">
                 <div class="form-group">
-                  <label for="input-ip-name">Nombre del IP / Investigador: *</label>
-                  <input type="text" id="input-ip-name" required placeholder="Ej. Dr. Xavier Pujol">
+                  <label for="input-gene">Gen de Interés (Símbolo HGNC): <span style="color: red; font-weight:700;">* Obligatorio</span></label>
+                  <input type="text" id="input-gene" required placeholder="Ej. KCNQ2, SYNGAP1, SCN2A" style="font-weight: 700; text-transform: uppercase;">
                 </div>
                 <div class="form-group">
-                  <label for="input-institution">Institución / Hospital: *</label>
-                  <input type="text" id="input-institution" required placeholder="Ej. Hospital Sant Joan de Déu (SJD)">
+                  <label for="input-mechanism">Mecanismo Mutacional Esperado: <span style="font-weight:400; color:var(--text-muted);">(Opcional)</span></label>
+                  <select id="input-mechanism">
+                    <option value="Unclear / Spectrum" selected>En Estudio / Espectro Mixto</option>
+                    <option value="Loss-of-Function (LoF)">Pérdida de Función (LoF / Haploinsuficiencia)</option>
+                    <option value="Gain-of-Function (GoF)">Ganancia de Función (GoF)</option>
+                    <option value="Dominant Negative">Efecto Dominante Negativo</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="input-title">Título Corto del Proyecto: <span style="font-weight:400; color:var(--text-muted);">(Opcional)</span></label>
+                <input type="text" id="input-title" placeholder="Ej. Estudio de variaciones genómicas y cohortes para este gen">
+              </div>
+            </div>
+
+            <!-- Step 2: Investigador e Institución (Opcionales) -->
+            <div class="form-section">
+              <h3><span class="section-num">2</span> Investigador Principal & Institución <span style="font-weight:400; font-size:0.85rem; color:var(--text-muted);">(Opcional - Se usa tu perfil por defecto)</span></h3>
+              <div class="grid-2col-inputs">
+                <div class="form-group">
+                  <label for="input-ip-name">Nombre del IP / Investigador: <span style="font-weight:400; color:var(--text-muted);">(Opcional)</span></label>
+                  <input type="text" id="input-ip-name" placeholder="Ej. Dr. Xavier Pujol">
                 </div>
                 <div class="form-group">
-                  <label for="input-email">Correo Electrónico Académico: *</label>
-                  <input type="email" id="input-email" required placeholder="xpujol@sjd.es">
+                  <label for="input-institution">Institución / Hospital: <span style="font-weight:400; color:var(--text-muted);">(Opcional)</span></label>
+                  <input type="text" id="input-institution" placeholder="Ej. Hospital Sant Joan de Déu (SJD)">
                 </div>
                 <div class="form-group">
-                  <label for="input-region">País de Origen: *</label>
-                  <select id="input-region" required>
+                  <label for="input-email">Correo Electrónico Académico: <span style="font-weight:400; color:var(--text-muted);">(Opcional)</span></label>
+                  <input type="email" id="input-email" placeholder="xpujol@sjd.es">
+                </div>
+                <div class="form-group">
+                  <label for="input-region">País de Origen: <span style="font-weight:400; color:var(--text-muted);">(Opcional)</span></label>
+                  <select id="input-region">
                     <option value="spain" selected>España</option>
                     <option value="germany">Alemania</option>
                     <option value="argentina">Argentina</option>
@@ -1783,33 +1813,9 @@ input:focus, select:focus, textarea:focus {
               </div>
             </div>
 
-            <!-- Step 2: Gen y Mecanismo -->
-            <div class="form-section">
-              <h3><span class="section-num">2</span> Datos Genómicos & Mecanismo</h3>
-              <div class="grid-2col-inputs">
-                <div class="form-group">
-                  <label for="input-gene">Gen de Interés (Símbolo HGNC): *</label>
-                  <input type="text" id="input-gene" required placeholder="Ej. KCNQ2, SYNGAP1, SCN2A" style="font-weight: 700; text-transform: uppercase;">
-                </div>
-                <div class="form-group">
-                  <label for="input-mechanism">Mecanismo Mutacional Esperado: *</label>
-                  <select id="input-mechanism" required>
-                    <option value="Loss-of-Function (LoF)">Pérdida de Función (LoF / Haploinsuficiencia)</option>
-                    <option value="Gain-of-Function (GoF)">Ganancia de Función (GoF)</option>
-                    <option value="Dominant Negative">Efecto Dominante Negativo</option>
-                    <option value="Unclear / Spectrum">En Estudio / Espectro Mixto</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="input-title">Título Corto del Proyecto: *</label>
-                <input type="text" id="input-title" required placeholder="Ej. Caracterización clínica y funcional de variaciones en el poro de KCNQ2">
-              </div>
-            </div>
-
             <!-- Step 3: Fenotipo HPO -->
             <div class="form-section">
-              <h3><span class="section-num">3</span> Fenotipo Clínico (Términos HPO)</h3>
+              <h3><span class="section-num">3</span> Fenotipo Clínico (Términos HPO) <span style="font-weight:400; font-size:0.85rem; color:var(--text-muted);">(Opcional)</span></h3>
               <div class="form-group">
                 <label>Añadir Términos HPO Principales:</label>
                 <div class="hpo-picker">
@@ -1818,28 +1824,26 @@ input:focus, select:focus, textarea:focus {
                 </div>
                 <div class="hpo-chips-container" id="hpo-chips">
                   <!-- HPO Chips added here -->
-                  <span class="hpo-chip" data-code="HP:0001250">HP:0001250 Seizures <i class="fa-solid fa-xmark remove-chip"></i></span>
-                  <span class="hpo-chip" data-code="HP:0001263">HP:0001263 Global developmental delay <i class="fa-solid fa-xmark remove-chip"></i></span>
                 </div>
               </div>
             </div>
 
             <!-- Step 4: Estado de Cohorte & Modelos -->
             <div class="form-section">
-              <h3><span class="section-num">4</span> Estado de la Cohorte & Ensayos Disponibles</h3>
+              <h3><span class="section-num">4</span> Estado de la Cohorte & Ensayos Disponibles <span style="font-weight:400; font-size:0.85rem; color:var(--text-muted);">(Opcional)</span></h3>
               <div class="grid-3col-inputs">
                 <div class="form-group">
-                  <label for="input-current-n">Pacientes Actuales ($N$): *</label>
-                  <input type="number" id="input-current-n" min="1" value="5" required>
+                  <label for="input-current-n">Pacientes Actuales ($N$): <span style="font-weight:400; color:var(--text-muted);">(Opcional)</span></label>
+                  <input type="number" id="input-current-n" min="1" value="1">
                 </div>
                 <div class="form-group">
-                  <label for="input-target-n">Meta de Cohorte ($N_{meta}$): *</label>
-                  <input type="number" id="input-target-n" min="2" value="15" required>
+                  <label for="input-target-n">Meta de Cohorte ($N_{meta}$): <span style="font-weight:400; color:var(--text-muted);">(Opcional)</span></label>
+                  <input type="number" id="input-target-n" min="1" value="10">
                 </div>
                 <div class="form-group">
-                  <label for="input-status">Estado del Proyecto: *</label>
-                  <select id="input-status" required>
-                    <option value="recruiting">Reclutando cohorte</option>
+                  <label for="input-status">Estado del Proyecto: <span style="font-weight:400; color:var(--text-muted);">(Opcional)</span></label>
+                  <select id="input-status">
+                    <option value="recruiting" selected>Reclutando cohorte</option>
                     <option value="functional">Validación Funcional en Curso</option>
                     <option value="manuscript">Buscando casos finales para Manuscrito</option>
                   </select>
@@ -2808,17 +2812,28 @@ function initProjectForm() {
     e.preventDefault();
 
     const gene = document.getElementById('input-gene').value.trim().toUpperCase();
-    const title = document.getElementById('input-title').value.trim();
-    const ip = document.getElementById('input-ip-name').value.trim();
-    const institution = document.getElementById('input-institution').value.trim();
-    const email = document.getElementById('input-email').value.trim();
-    const region = document.getElementById('input-region').value;
-    const mechanism = document.getElementById('input-mechanism').value;
+    if (!gene) {
+      alert('Por favor, introduce el símbolo oficial del Gen de Interés.');
+      return;
+    }
+
+    const rawTitle = document.getElementById('input-title').value.trim();
+    const rawIp = document.getElementById('input-ip-name').value.trim();
+    const rawInstitution = document.getElementById('input-institution').value.trim();
+    const rawEmail = document.getElementById('input-email').value.trim();
+    const region = document.getElementById('input-region').value || (currentUser ? currentUser.country : 'spain') || 'spain';
+    const mechanism = document.getElementById('input-mechanism').value || 'En Estudio / Espectro Mixto';
     const currentN = parseInt(document.getElementById('input-current-n').value) || 1;
     const targetN = parseInt(document.getElementById('input-target-n').value) || 10;
-    const status = document.getElementById('input-status').value;
-    const description = document.getElementById('input-description').value.trim();
-    const visibility = document.querySelector('input[name="visibility"]:checked').value;
+    const status = document.getElementById('input-status').value || 'recruiting';
+    const rawDescription = document.getElementById('input-description').value.trim();
+    const visibility = document.querySelector('input[name="visibility"]:checked') ? document.querySelector('input[name="visibility"]:checked').value : 'public';
+
+    const title = rawTitle || `Estudio y caracterización clínica del gen ${gene}`;
+    const ip = rawIp || (currentUser ? currentUser.name : 'Investigador Principal');
+    const institution = rawInstitution || (currentUser ? currentUser.institution : 'Centro de Investigación');
+    const email = rawEmail || (currentUser ? currentUser.email : 'contacto@colabhunter.org');
+    const description = rawDescription || `Proyecto de colaboración científica en fase de reclutamiento y análisis para el gen ${gene}. Buscar variantes, fenotipos HPO o modelos funcionales.`;
 
     const selectedModels = [];
     document.querySelectorAll('input[name="models"]:checked').forEach(cb => {
@@ -2842,7 +2857,7 @@ function initProjectForm() {
         region,
         email,
         github: `https://github.com/${ip.toLowerCase().replace(/[^a-z]/g, '')}-lab`,
-        orcid: '0000-0002-0000-0000',
+        orcid: (currentUser && currentUser.orcid) ? currentUser.orcid : '0000-0002-0000-0000',
         phone: '+34 930 000 000',
         mechanism,
         hpoTerms: [...selectedHpoChips],
