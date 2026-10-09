@@ -1939,7 +1939,7 @@ input:focus, select:focus, textarea:focus {
               <div class="demo-account-card" onclick="switchDemoUser('elena.ramos@vhir.org')">
                 <div class="profile-avatar-lg" style="width:38px; height:38px; font-size:0.9rem; background:linear-gradient(135deg, #10b981 0%, #059669 100%);">ER</div>
                 <div>
-                  <strong>Dra. Elena Ramos</strong> &bull; HUVH Vall d'Hebron
+                  <strong>Dra. Elena Ramos</strong> &bull; HUVH Vall d\'Hebron
                   <div style="font-size:0.78rem; color:var(--text-muted);">elena.ramos@vhir.org (Investigadora SYNGAP1)</div>
                 </div>
               </div>
@@ -2012,7 +2012,7 @@ const defaultDemoProjects = [
     gene: 'SYNGAP1',
     title: 'Estudio transcriptor de haploinsuficiencia en SYNGAP1 y respuesta a moduladores moleculares',
     ip: 'Dra. Elena Ramos',
-    institution: 'Hospital Universitari Vall d'Hebron (HUVH)',
+    institution: "Hospital Universitari Vall d\'Hebron (HUVH)",
     region: 'spain',
     email: 'elena.ramos@vhir.org',
     github: 'https://github.com/ramos-lab-vhir',
@@ -2061,7 +2061,7 @@ const defaultDemoProjects = [
     gene: 'CDKL5',
     title: 'Caracterización fenotípica profunda y biomarcadores en Síndrome CDKL5',
     ip: 'Dra. Sarah Jenkins',
-    institution: 'Boston Children's Hospital / Harvard Medical School',
+    institution: "Boston Children's Hospital / Harvard Medical School",
     region: 'usa',
     email: 'sarah.jenkins@childrens.harvard.edu',
     github: 'https://github.com/jenkins-cdkl5-lab',
@@ -2140,6 +2140,122 @@ try {
 }
 
 let projectsData = (parsedProjects && Array.isArray(parsedProjects) && parsedProjects.length > 0) ? parsedProjects : [...defaultDemoProjects];
+
+const demoAccounts = {
+  'xpujol@sjd.es': {
+    name: 'Dr. Xavier Pujol',
+    email: 'xpujol@sjd.es',
+    institution: 'Hospital Sant Joan de Déu (SJD)',
+    country: 'spain',
+    orcid: '0000-0002-1829-4011',
+    avatar: 'XP'
+  },
+  'elena.ramos@vhir.org': {
+    name: 'Dra. Elena Ramos',
+    email: 'elena.ramos@vhir.org',
+    institution: 'Hospital Universitari Vall d\'Hebron (HUVH)',
+    country: 'spain',
+    orcid: '0000-0001-9402-3318',
+    avatar: 'ER'
+  },
+  'cmendoza@charite.de': {
+    name: 'Dr. Carlos Mendoza',
+    email: 'cmendoza@charite.de',
+    institution: 'Charité - Universitätsmedizin Berlin',
+    country: 'germany',
+    orcid: '0000-0003-7720-1142',
+    avatar: 'CM'
+  }
+};
+
+let currentUser = JSON.parse(localStorage.getItem('colabhunter_user')) || demoAccounts['xpujol@sjd.es'];
+
+let defaultDemoSearches = [
+  { id: 'search-001', user_email: 'xpujol@sjd.es', user_name: 'Dr. Xavier Pujol', search_query: 'KCNQ2', search_type: 'gen', created_at: new Date(Date.now() - 86400000).toISOString() },
+  { id: 'search-002', user_email: 'xpujol@sjd.es', user_name: 'Dr. Xavier Pujol', search_query: 'HP:0001250 Seizures', search_type: 'hpo', created_at: new Date(Date.now() - 43200000).toISOString() },
+  { id: 'search-003', user_email: 'elena.ramos@vhir.org', user_name: 'Dra. Elena Ramos', search_query: 'SYNGAP1', search_type: 'gen', created_at: new Date(Date.now() - 21600000).toISOString() }
+];
+
+let userSearches = JSON.parse(localStorage.getItem('colabhunter_user_searches')) || defaultDemoSearches;
+
+let defaultDemoNotifications = [
+  {
+    id: 'notif-001',
+    target_user_email: 'xpujol@sjd.es',
+    trigger_user_name: 'Dra. Elena Ramos (HUVH)',
+    trigger_user_email: 'elena.ramos@vhir.org',
+    gene: 'KCNQ2',
+    message: 'La Dra. Elena Ramos ha buscado el gen KCNQ2 coincidente con tu cohorte activa.',
+    is_read: false,
+    created_at: new Date(Date.now() - 3600000).toISOString()
+  },
+  {
+    id: 'notif-002',
+    target_user_email: 'elena.ramos@vhir.org',
+    trigger_user_name: 'Dr. Xavier Pujol (SJD)',
+    trigger_user_email: 'xpujol@sjd.es',
+    gene: 'SYNGAP1',
+    message: 'El Dr. Xavier Pujol ha consultado coincidencias fenotípicas para el gen SYNGAP1.',
+    is_read: false,
+    created_at: new Date(Date.now() - 7200000).toISOString()
+  }
+];
+
+let userNotifications = JSON.parse(localStorage.getItem('colabhunter_user_notifications')) || defaultDemoNotifications;
+
+function saveUserToStorage() {
+  localStorage.setItem('colabhunter_user', JSON.stringify(currentUser));
+  updateUserUI();
+}
+
+function saveSearchesToStorage() {
+  localStorage.setItem('colabhunter_user_searches', JSON.stringify(userSearches));
+}
+
+function saveNotificationsToStorage() {
+  localStorage.setItem('colabhunter_user_notifications', JSON.stringify(userNotifications));
+  updateNotifBadges();
+}
+
+function updateUserUI() {
+  const widgetBtnName = document.getElementById('user-widget-name');
+  if (widgetBtnName) {
+    widgetBtnName.textContent = currentUser ? currentUser.name : 'Iniciar Sesión';
+  }
+  updateNotifBadges();
+  renderProfileTab();
+}
+
+function updateNotifBadges() {
+  if (!currentUser) return;
+  const unreadCount = userNotifications.filter(n => n.target_user_email === currentUser.email && !n.is_read).length;
+  
+  const bellCount = document.getElementById('notif-bell-count');
+  const navCount = document.getElementById('nav-notif-count');
+  
+  if (bellCount) {
+    bellCount.textContent = unreadCount;
+    bellCount.style.display = unreadCount > 0 ? 'inline-block' : 'none';
+  }
+  if (navCount) {
+    navCount.textContent = unreadCount;
+    navCount.style.display = unreadCount > 0 ? 'inline-block' : 'none';
+  }
+}
+
+function openAuthModal() {
+  const modal = document.getElementById('auth-modal');
+  if (modal) modal.classList.add('active');
+}
+
+function closeAuthModal() {
+  const modal = document.getElementById('auth-modal');
+  if (modal) modal.classList.remove('active');
+}
+
+function switchDemoUser(email) {
+  if (demoAccounts[email]) {
+    currentUser = demoAccounts[email];
 
 // Supabase Cloud Configuration
 let supabaseUrl = localStorage.getItem('colabhunter_supabase_url') || 'https://abogmjikrhrkqcpckfdi.supabase.co';
@@ -2384,44 +2500,24 @@ function goToSlide(slideNum) {
   });
 }
 
-function getCountryLabel(key) {
-  const map = {
-    'spain': 'España',
-    'catalonia': 'España',
-    'germany': 'Alemania',
-    'argentina': 'Argentina',
-    'australia': 'Australia',
-    'belgium': 'Bélgica',
-    'brazil': 'Brasil',
-    'canada': 'Canadá',
-    'chile': 'Chile',
-    'colombia': 'Colombia',
-    'denmark': 'Dinamarca',
-    'usa': 'Estados Unidos',
-    'france': 'Francia',
-    'italy': 'Italia',
-    'japan': 'Japón',
-    'mexico': 'México',
-    'norway': 'Noruega',
-    'netherlands': 'Países Bajos',
-    'portugal': 'Portugal',
-    'uk': 'Reino Unido',
-    'sweden': 'Suecia',
-    'switzerland': 'Suiza',
-    'other': 'Otro País'
-  };
-  return map[key] || key || 'España';
-}
+
 
 function renderProjectsGrid(projects) {
+  const list = (projects && Array.isArray(projects)) ? projects : (projectsData || []);
   const grid = document.getElementById('projects-grid');
+  if (!grid) return;
   grid.innerHTML = '';
 
-  document.getElementById('stat-total-projects').textContent = projects.length;
-  const totalN = projects.reduce((acc, p) => acc + p.currentN, 0);
-  document.getElementById('stat-total-patients').textContent = totalN;
+  const statProj = document.getElementById('stat-total-projects');
+  if (statProj) statProj.textContent = list.length;
+  
+  const statPat = document.getElementById('stat-total-patients');
+  if (statPat) {
+    const totalN = list.reduce((acc, p) => acc + (p.currentN || 0), 0);
+    statPat.textContent = totalN;
+  }
 
-  if (projects.length === 0) {
+  if (list.length === 0) {
     grid.innerHTML = `
       <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px dashed var(--border-color);">
         <i class="fa-solid fa-folder-open" style="font-size: 2.5rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
@@ -2432,31 +2528,35 @@ function renderProjectsGrid(projects) {
     return;
   }
 
-  projects.forEach(p => {
-    const progressPercent = Math.min(Math.round((p.currentN / p.targetN) * 100), 100);
+  list.forEach(p => {
+    const curN = p.currentN || 1;
+    const tarN = p.targetN || 10;
+    const progressPercent = Math.min(Math.round((curN / tarN) * 100), 100);
 
     let statusClass = 'status-recruiting';
     if (p.status === 'functional') statusClass = 'status-functional';
     if (p.status === 'manuscript') statusClass = 'status-manuscript';
+
+    const hpoList = Array.isArray(p.hpoTerms) ? p.hpoTerms : [];
 
     const card = document.createElement('div');
     card.className = 'project-card';
     card.innerHTML = `
       <div>
         <div class="project-card-header">
-          <span class="gene-badge">${p.gene}</span>
-          <span class="status-badge ${statusClass}">${p.statusLabel}</span>
+          <span class="gene-badge">${p.gene || 'GEN'}</span>
+          <span class="status-badge ${statusClass}">${p.statusLabel || 'Reclutando Cohorte'}</span>
         </div>
-        <h3 class="project-title">${p.title}</h3>
+        <h3 class="project-title">${p.title || 'Proyecto de Investigación'}</h3>
         <p class="project-institution">
-          <i class="fa-solid fa-hospital-user color-primary"></i> ${p.institution} (${p.ip}) &bull; <span class="country-pill"><i class="fa-solid fa-earth-americas"></i> ${getCountryLabel(p.region)}</span>
+          <i class="fa-solid fa-hospital-user color-primary"></i> ${p.institution || 'Institución'} (${p.ip || 'Investigador Principal'}) &bull; <span class="country-pill"><i class="fa-solid fa-earth-americas"></i> ${getCountryLabel(p.region)}</span>
         </p>
       </div>
 
       <div class="cohort-progress-container">
         <div class="cohort-progress-label">
           <span>Progreso Cohorte ($N$):</span>
-          <span><strong>${p.currentN}</strong> / ${p.targetN} pacientes (${progressPercent}%)</span>
+          <span><strong>${curN}</strong> / ${tarN} pacientes (${progressPercent}%)</span>
         </div>
         <div class="cohort-progress-bar">
           <div class="cohort-progress-fill" style="width: ${progressPercent}%;"></div>
@@ -2464,7 +2564,7 @@ function renderProjectsGrid(projects) {
       </div>
 
       <div class="hpo-tags-wrapper">
-        ${p.hpoTerms.map(h => `<span class="hpo-tag">${h.code} ${h.name}</span>`).join('')}
+        ${hpoList.map(h => `<span class="hpo-tag">${h.code || 'HP:0000000'} ${h.name || ''}</span>`).join('')}
       </div>
 
       <div class="card-actions">
@@ -2968,121 +3068,7 @@ function initThemeToggle() {
    USER AUTHENTICATION, PROFILE & NOTIFICATION ENGINE
    ========================================================================== */
 
-const demoAccounts = {
-  'xpujol@sjd.es': {
-    name: 'Dr. Xavier Pujol',
-    email: 'xpujol@sjd.es',
-    institution: 'Hospital Sant Joan de Déu (SJD)',
-    country: 'spain',
-    orcid: '0000-0002-1829-4011',
-    avatar: 'XP'
-  },
-  'elena.ramos@vhir.org': {
-    name: 'Dra. Elena Ramos',
-    email: 'elena.ramos@vhir.org',
-    institution: 'Hospital Universitari Vall d\'Hebron (HUVH)',
-    country: 'spain',
-    orcid: '0000-0001-9402-3318',
-    avatar: 'ER'
-  },
-  'cmendoza@charite.de': {
-    name: 'Dr. Carlos Mendoza',
-    email: 'cmendoza@charite.de',
-    institution: 'Charité - Universitätsmedizin Berlin',
-    country: 'germany',
-    orcid: '0000-0003-7720-1142',
-    avatar: 'CM'
-  }
-};
 
-let currentUser = JSON.parse(localStorage.getItem('colabhunter_user')) || demoAccounts['xpujol@sjd.es'];
-
-let defaultDemoSearches = [
-  { id: 'search-001', user_email: 'xpujol@sjd.es', user_name: 'Dr. Xavier Pujol', search_query: 'KCNQ2', search_type: 'gen', created_at: new Date(Date.now() - 86400000).toISOString() },
-  { id: 'search-002', user_email: 'xpujol@sjd.es', user_name: 'Dr. Xavier Pujol', search_query: 'HP:0001250 Seizures', search_type: 'hpo', created_at: new Date(Date.now() - 43200000).toISOString() },
-  { id: 'search-003', user_email: 'elena.ramos@vhir.org', user_name: 'Dra. Elena Ramos', search_query: 'SYNGAP1', search_type: 'gen', created_at: new Date(Date.now() - 21600000).toISOString() }
-];
-
-let userSearches = JSON.parse(localStorage.getItem('colabhunter_user_searches')) || defaultDemoSearches;
-
-let defaultDemoNotifications = [
-  {
-    id: 'notif-001',
-    target_user_email: 'xpujol@sjd.es',
-    trigger_user_name: 'Dra. Elena Ramos (HUVH)',
-    trigger_user_email: 'elena.ramos@vhir.org',
-    gene: 'KCNQ2',
-    message: 'La Dra. Elena Ramos ha buscado el gen KCNQ2 coincidente con tu cohorte activa.',
-    is_read: false,
-    created_at: new Date(Date.now() - 3600000).toISOString()
-  },
-  {
-    id: 'notif-002',
-    target_user_email: 'elena.ramos@vhir.org',
-    trigger_user_name: 'Dr. Xavier Pujol (SJD)',
-    trigger_user_email: 'xpujol@sjd.es',
-    gene: 'SYNGAP1',
-    message: 'El Dr. Xavier Pujol ha consultado coincidencias fenotípicas para el gen SYNGAP1.',
-    is_read: false,
-    created_at: new Date(Date.now() - 7200000).toISOString()
-  }
-];
-
-let userNotifications = JSON.parse(localStorage.getItem('colabhunter_user_notifications')) || defaultDemoNotifications;
-
-function saveUserToStorage() {
-  localStorage.setItem('colabhunter_user', JSON.stringify(currentUser));
-  updateUserUI();
-}
-
-function saveSearchesToStorage() {
-  localStorage.setItem('colabhunter_user_searches', JSON.stringify(userSearches));
-}
-
-function saveNotificationsToStorage() {
-  localStorage.setItem('colabhunter_user_notifications', JSON.stringify(userNotifications));
-  updateNotifBadges();
-}
-
-function updateUserUI() {
-  const widgetBtnName = document.getElementById('user-widget-name');
-  if (widgetBtnName) {
-    widgetBtnName.textContent = currentUser ? currentUser.name : 'Iniciar Sesión';
-  }
-  updateNotifBadges();
-  renderProfileTab();
-}
-
-function updateNotifBadges() {
-  if (!currentUser) return;
-  const unreadCount = userNotifications.filter(n => n.target_user_email === currentUser.email && !n.is_read).length;
-  
-  const bellCount = document.getElementById('notif-bell-count');
-  const navCount = document.getElementById('nav-notif-count');
-  
-  if (bellCount) {
-    bellCount.textContent = unreadCount;
-    bellCount.style.display = unreadCount > 0 ? 'inline-block' : 'none';
-  }
-  if (navCount) {
-    navCount.textContent = unreadCount;
-    navCount.style.display = unreadCount > 0 ? 'inline-block' : 'none';
-  }
-}
-
-function openAuthModal() {
-  const modal = document.getElementById('auth-modal');
-  if (modal) modal.classList.add('active');
-}
-
-function closeAuthModal() {
-  const modal = document.getElementById('auth-modal');
-  if (modal) modal.classList.remove('active');
-}
-
-function switchDemoUser(email) {
-  if (demoAccounts[email]) {
-    currentUser = demoAccounts[email];
     saveUserToStorage();
     closeAuthModal();
     alert(`Has cambiado a la cuenta de: ${currentUser.name} (${currentUser.institution})`);
@@ -3463,6 +3449,36 @@ function executeSimulatedSearch() {
 
 Se han enviado ${matchingProjects.length} notificaciones cruzadas a los propietarios del gen.`);
 }
+
+function getCountryLabel(key) {
+  const map = {
+    'spain': 'España',
+    'catalonia': 'España',
+    'germany': 'Alemania',
+    'argentina': 'Argentina',
+    'australia': 'Australia',
+    'belgium': 'Bélgica',
+    'brazil': 'Brasil',
+    'canada': 'Canadá',
+    'chile': 'Chile',
+    'colombia': 'Colombia',
+    'denmark': 'Dinamarca',
+    'usa': 'Estados Unidos',
+    'france': 'Francia',
+    'italy': 'Italia',
+    'japan': 'Japón',
+    'mexico': 'México',
+    'norway': 'Noruega',
+    'netherlands': 'Países Bajos',
+    'portugal': 'Portugal',
+    'uk': 'Reino Unido',
+    'sweden': 'Suecia',
+    'switzerland': 'Suiza',
+    'other': 'Otro País'
+  };
+  return map[key] || key || 'España';
+}
+
 
 function renderMyGeneAlerts() {
   if (!currentUser) return;
