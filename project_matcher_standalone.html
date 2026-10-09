@@ -1408,13 +1408,13 @@ input:focus, select:focus, textarea:focus {
       </div>
 
       <nav class="main-nav">
-        <button class="nav-btn active" data-tab="profile-tab">
+        <button class="nav-btn active" data-tab="profile-tab" onclick="switchTab('profile-tab')">
           <i class="fa-solid fa-user-circle"></i> 1. Mi Perfil
         </button>
-        <button class="nav-btn" data-tab="explorer-tab">
+        <button class="nav-btn" data-tab="explorer-tab" onclick="switchTab('explorer-tab')">
           <i class="fa-solid fa-compass"></i> 2. Explorador de Proyectos
         </button>
-        <button class="nav-btn" data-tab="activity-tab">
+        <button class="nav-btn" data-tab="activity-tab" onclick="switchTab('activity-tab')">
           <i class="fa-solid fa-bell"></i> 3. Alertas & Actividad <span class="notif-badge-count" id="nav-notif-count" style="display:none; margin-left:0.3rem;">0</span>
         </button>
       </nav>
@@ -2173,7 +2173,10 @@ let currentUser = JSON.parse(localStorage.getItem('colabhunter_user')) || demoAc
 let defaultDemoSearches = [
   { id: 'search-001', user_email: 'xpujol@sjd.es', user_name: 'Dr. Xavier Pujol', search_query: 'KCNQ2', search_type: 'gen', created_at: new Date(Date.now() - 86400000).toISOString() },
   { id: 'search-002', user_email: 'xpujol@sjd.es', user_name: 'Dr. Xavier Pujol', search_query: 'HP:0001250 Seizures', search_type: 'hpo', created_at: new Date(Date.now() - 43200000).toISOString() },
-  { id: 'search-003', user_email: 'elena.ramos@vhir.org', user_name: 'Dra. Elena Ramos', search_query: 'SYNGAP1', search_type: 'gen', created_at: new Date(Date.now() - 21600000).toISOString() }
+  { id: 'search-003', user_email: 'elena.ramos@vhir.org', user_name: 'Dra. Elena Ramos', search_query: 'SYNGAP1', search_type: 'gen', created_at: new Date(Date.now() - 21600000).toISOString() },
+  { id: 'search-004', user_email: 'elena.ramos@vhir.org', user_name: 'Dra. Elena Ramos', search_query: 'KCNQ2', search_type: 'gen', created_at: new Date(Date.now() - 14400000).toISOString() },
+  { id: 'search-005', user_email: 'cmendoza@charite.de', user_name: 'Dr. Carlos Mendoza', search_query: 'KCNQ2', search_type: 'gen', created_at: new Date(Date.now() - 7200000).toISOString() },
+  { id: 'search-006', user_email: 'xpujol@sjd.es', user_name: 'Dr. Xavier Pujol', search_query: 'SYNGAP1', search_type: 'gen', created_at: new Date(Date.now() - 3600000).toISOString() }
 ];
 
 let userSearches = JSON.parse(localStorage.getItem('colabhunter_user_searches')) || defaultDemoSearches;
@@ -2185,17 +2188,27 @@ let defaultDemoNotifications = [
     trigger_user_name: 'Dra. Elena Ramos (HUVH)',
     trigger_user_email: 'elena.ramos@vhir.org',
     gene: 'KCNQ2',
-    message: 'La Dra. Elena Ramos ha buscado el gen KCNQ2 coincidente con tu cohorte activa.',
+    message: '⚡ ¡ALERTA DE MATCH! La Dra. Elena Ramos ha buscado el gen KCNQ2 coincidente con tu cohorte activa.',
     is_read: false,
     created_at: new Date(Date.now() - 3600000).toISOString()
   },
   {
     id: 'notif-002',
+    target_user_email: 'xpujol@sjd.es',
+    trigger_user_name: 'Dr. Carlos Mendoza (Charité)',
+    trigger_user_email: 'cmendoza@charite.de',
+    gene: 'KCNQ2',
+    message: '⚡ ¡ALERTA DE MATCH! El Dr. Carlos Mendoza ha consultado la base de datos buscando cohortes en KCNQ2.',
+    is_read: false,
+    created_at: new Date(Date.now() - 1800000).toISOString()
+  },
+  {
+    id: 'notif-003',
     target_user_email: 'elena.ramos@vhir.org',
     trigger_user_name: 'Dr. Xavier Pujol (SJD)',
     trigger_user_email: 'xpujol@sjd.es',
     gene: 'SYNGAP1',
-    message: 'El Dr. Xavier Pujol ha consultado coincidencias fenotípicas para el gen SYNGAP1.',
+    message: '⚡ ¡ALERTA DE MATCH! El Dr. Xavier Pujol ha consultado coincidencias fenotípicas para el gen SYNGAP1.',
     is_read: false,
     created_at: new Date(Date.now() - 7200000).toISOString()
   }
