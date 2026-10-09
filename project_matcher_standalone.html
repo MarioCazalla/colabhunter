@@ -1359,10 +1359,21 @@ input:focus, select:focus, textarea:focus {
         <button class="nav-btn" data-tab="governance-tab">
           <i class="fa-solid fa-shield-halved"></i> Gobernanza
         </button>
+        <button class="nav-btn" data-tab="profile-tab">
+          <i class="fa-solid fa-user-gear"></i> Mi Perfil <span class="notif-badge-count" id="nav-notif-count" style="display:none; margin-left:0.3rem;">0</span>
+        </button>
       </nav>
 
       <div class="header-actions">
-        <span class="badge-global"><i class="fa-solid fa-earth-americas"></i> Red Internacional Global</span>
+        <span class="badge-global"><i class="fa-solid fa-earth-americas"></i> Red Internacional</span>
+        <button id="notif-bell-btn" class="notif-bell-btn" title="Centro de Notificaciones" onclick="openNotificationsModal()">
+          <i class="fa-solid fa-bell"></i>
+          <span id="notif-bell-count" class="notif-badge-count" style="display:none;">0</span>
+        </button>
+        <button id="user-widget-btn" class="user-widget-btn" onclick="openAuthModal()">
+          <i class="fa-solid fa-user-circle" style="font-size: 1.1rem; color: var(--color-primary);"></i>
+          <span id="user-widget-name">Dr. Xavier Pujol</span>
+        </button>
         <button id="theme-toggle" class="icon-btn" title="Cambiar Tema">
           <i class="fa-solid fa-sun"></i>
         </button>
@@ -1997,6 +2008,95 @@ input:focus, select:focus, textarea:focus {
       </div>
     </section>
 
+    <!-- ========================================== -->
+    <!-- TAB 5: MI PERFIL & NOTIFICACIONES         -->
+    <!-- ========================================== -->
+    <section id="profile-tab" class="tab-pane">
+      <div class="profile-container">
+        
+        <!-- Profile Header Card -->
+        <div class="profile-header-card">
+          <div class="profile-info-main">
+            <div class="profile-avatar-lg" id="profile-avatar-display">XP</div>
+            <div class="profile-meta">
+              <h2 id="profile-name-display">Dr. Xavier Pujol</h2>
+              <p><i class="fa-solid fa-hospital-user color-primary"></i> <span id="profile-institution-display">Hospital Sant Joan de Déu (SJD)</span></p>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.2rem;">
+                <i class="fa-solid fa-envelope"></i> <span id="profile-email-display">xpujol@sjd.es</span> &bull; 
+                <i class="fa-solid fa-id-badge"></i> ORCID: <span id="profile-orcid-display">0000-0002-1829-4011</span> &bull; 
+                <i class="fa-solid fa-earth-americas"></i> País: <span id="profile-country-display">España</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="profile-stats-row">
+            <div class="profile-stat-box">
+              <div class="num" id="stat-my-projects">1</div>
+              <div class="label">Proyectos Publicados</div>
+            </div>
+            <div class="profile-stat-box">
+              <div class="num" id="stat-my-searches">2</div>
+              <div class="label">Búsquedas Guardadas</div>
+            </div>
+            <div class="profile-stat-box">
+              <div class="num" id="stat-my-notifs">1</div>
+              <div class="label">Alertas Recibidas</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Mis Proyectos -->
+        <div class="explorer-card" style="margin-top: 1rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+            <h3><i class="fa-solid fa-folder-open color-primary"></i> Mis Proyectos Publicados en ColabHunter</h3>
+            <button class="btn btn-primary btn-sm" onclick="switchTab('publish-tab')">
+              <i class="fa-solid fa-plus-circle"></i> Nuevo Proyecto
+            </button>
+          </div>
+          <div id="my-projects-grid" class="projects-grid">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- Section: Historial de Búsquedas -->
+        <div class="explorer-card">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+            <h3><i class="fa-solid fa-clock-rotate-left color-primary"></i> Mi Historial de Búsquedas Persistente</h3>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">Guardado automáticamente en tu cuenta de Supabase</span>
+          </div>
+          <div class="history-table-container">
+            <table class="history-table">
+              <thead>
+                <tr>
+                  <th>Fecha & Hora</th>
+                  <th>Tipo</th>
+                  <th>Consulta Guardada</th>
+                  <th>Estado en la Red</th>
+                </tr>
+              </thead>
+              <tbody id="my-searches-list">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Section: Buzón de Notificaciones -->
+        <div class="explorer-card">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+            <h3><i class="fa-solid fa-bell color-primary"></i> Buzón de Alertas y Coincidencias Cruzadas</h3>
+            <button class="btn btn-secondary btn-sm" onclick="markAllNotificationsRead()">
+              <i class="fa-solid fa-check-double"></i> Marcar todas como leídas
+            </button>
+          </div>
+          <div id="my-notifications-list" style="display: flex; flex-direction: column; gap: 1rem;">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
   </main>
 
   <!-- Project Detail Modal -->
@@ -2012,6 +2112,90 @@ input:focus, select:focus, textarea:focus {
       <div class="modal-footer">
         <button class="btn btn-secondary" id="modal-close-action">Cerrar</button>
         <button class="btn btn-primary" id="modal-connect-btn"><i class="fa-solid fa-paper-plane"></i> Enviar Solicitud de Colaboración</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Auth Modal -->
+  <div class="modal-backdrop" id="auth-modal">
+    <div class="modal-window" style="max-width: 540px;">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-user-circle color-primary"></i> Acceso e Identificación de Investigador</h3>
+        <button class="modal-close" onclick="closeAuthModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        
+        <div style="background: var(--color-primary-light); padding: 1rem; border-radius: var(--radius-md); border: 1px solid rgba(37,99,235,0.2);">
+          <h4 style="color: var(--color-primary); margin-bottom: 0.3rem;"><i class="fa-solid fa-bolt"></i> Cambio Rápido de Cuenta Demo (1-Clic)</h4>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+            Selecciona un perfil de prueba para comprobar la simulación de notificaciones cruzadas en vivo:
+          </p>
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <div class="demo-account-card" onclick="switchDemoUser('xpujol@sjd.es')">
+              <div class="profile-avatar-lg" style="width:38px; height:38px; font-size:0.9rem;">XP</div>
+              <div>
+                <strong>Dr. Xavier Pujol</strong> &bull; SJD Barcelona
+                <div style="font-size:0.78rem; color:var(--text-muted);">xpujol@sjd.es (Coordinador KCNQ2)</div>
+              </div>
+            </div>
+            <div class="demo-account-card" onclick="switchDemoUser('elena.ramos@vhir.org')">
+              <div class="profile-avatar-lg" style="width:38px; height:38px; font-size:0.9rem; background:linear-gradient(135deg, #10b981 0%, #059669 100%);">ER</div>
+              <div>
+                <strong>Dra. Elena Ramos</strong> &bull; HUVH Vall d'Hebron
+                <div style="font-size:0.78rem; color:var(--text-muted);">elena.ramos@vhir.org (Investigadora SYNGAP1)</div>
+              </div>
+            </div>
+            <div class="demo-account-card" onclick="switchDemoUser('cmendoza@charite.de')">
+              <div class="profile-avatar-lg" style="width:38px; height:38px; font-size:0.9rem; background:linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);">CM</div>
+              <div>
+                <strong>Dr. Carlos Mendoza</strong> &bull; Charité Berlin
+                <div style="font-size:0.78rem; color:var(--text-muted);">cmendoza@charite.de (Investigador SCN2A)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 0.5rem 0;">
+
+        <!-- Custom Login/Registration -->
+        <div>
+          <h4><i class="fa-solid fa-key"></i> Iniciar Sesión / Crear Cuenta</h4>
+          <form id="custom-auth-form" onsubmit="handleCustomAuthSubmit(event)" style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem;">
+            <div class="form-group">
+              <label>Correo Electrónico Académico:</label>
+              <input type="email" id="auth-email-input" required placeholder="tu.nombre@instituto.org">
+            </div>
+            <div class="form-group">
+              <label>Nombre Completo / IP:</label>
+              <input type="text" id="auth-name-input" required placeholder="Dr. / Dra. Nombre Apellido">
+            </div>
+            <div class="form-group">
+              <label>Hospital / Institución:</label>
+              <input type="text" id="auth-inst-input" required placeholder="Ej. Hospital Clínic, Charité, SJD">
+            </div>
+            <button type="submit" class="btn btn-primary full-width">
+              <i class="fa-solid fa-right-to-bracket"></i> Entrar / Registrarse
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Notifications Modal Drawer -->
+  <div class="modal-backdrop" id="notifications-modal">
+    <div class="modal-window" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-bell color-primary"></i> Notificaciones de Match</h3>
+        <button class="modal-close" onclick="closeNotificationsModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body" id="notif-modal-list">
+        <!-- Dynamic list -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="markAllNotificationsRead()">Marcar leídas</button>
+        <button class="btn btn-primary" onclick="closeNotificationsModal()">Cerrar</button>
       </div>
     </div>
   </div>
@@ -2218,6 +2402,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initMatchSimulator();
   initModalControls();
   initThemeToggle();
+  updateUserUI();
 });
 
 function initNavigation() {
@@ -2247,6 +2432,10 @@ function switchTab(tabId) {
       pane.classList.remove('active');
     }
   });
+
+  if (tabId === 'profile-tab') {
+    renderProfileTab();
+  }
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -2857,9 +3046,379 @@ function initThemeToggle() {
     toggleBtn.innerHTML = isLight ? '<i class="fa-solid fa-moon"></i>' : '<i class="fa-solid fa-sun"></i>';
   });
 }
-  </script>
-</body>
-</html>
+
+/* ==========================================================================
+   USER AUTHENTICATION, PROFILE & NOTIFICATION ENGINE
+   ========================================================================== */
+
+const demoAccounts = {
+  'xpujol@sjd.es': {
+    name: 'Dr. Xavier Pujol',
+    email: 'xpujol@sjd.es',
+    institution: 'Hospital Sant Joan de Déu (SJD)',
+    country: 'spain',
+    orcid: '0000-0002-1829-4011',
+    avatar: 'XP'
+  },
+  'elena.ramos@vhir.org': {
+    name: 'Dra. Elena Ramos',
+    email: 'elena.ramos@vhir.org',
+    institution: 'Hospital Universitari Vall d\'Hebron (HUVH)',
+    country: 'spain',
+    orcid: '0000-0001-9402-3318',
+    avatar: 'ER'
+  },
+  'cmendoza@charite.de': {
+    name: 'Dr. Carlos Mendoza',
+    email: 'cmendoza@charite.de',
+    institution: 'Charité - Universitätsmedizin Berlin',
+    country: 'germany',
+    orcid: '0000-0003-7720-1142',
+    avatar: 'CM'
+  }
+};
+
+let currentUser = JSON.parse(localStorage.getItem('colabhunter_user')) || demoAccounts['xpujol@sjd.es'];
+
+let defaultDemoSearches = [
+  { id: 'search-001', user_email: 'xpujol@sjd.es', user_name: 'Dr. Xavier Pujol', search_query: 'KCNQ2', search_type: 'gen', created_at: new Date(Date.now() - 86400000).toISOString() },
+  { id: 'search-002', user_email: 'xpujol@sjd.es', user_name: 'Dr. Xavier Pujol', search_query: 'HP:0001250 Seizures', search_type: 'hpo', created_at: new Date(Date.now() - 43200000).toISOString() },
+  { id: 'search-003', user_email: 'elena.ramos@vhir.org', user_name: 'Dra. Elena Ramos', search_query: 'SYNGAP1', search_type: 'gen', created_at: new Date(Date.now() - 21600000).toISOString() }
+];
+
+let userSearches = JSON.parse(localStorage.getItem('colabhunter_user_searches')) || defaultDemoSearches;
+
+let defaultDemoNotifications = [
+  {
+    id: 'notif-001',
+    target_user_email: 'xpujol@sjd.es',
+    trigger_user_name: 'Dra. Elena Ramos (HUVH)',
+    trigger_user_email: 'elena.ramos@vhir.org',
+    gene: 'KCNQ2',
+    message: 'La Dra. Elena Ramos ha buscado el gen KCNQ2 coincidente con tu cohorte activa.',
+    is_read: false,
+    created_at: new Date(Date.now() - 3600000).toISOString()
+  },
+  {
+    id: 'notif-002',
+    target_user_email: 'elena.ramos@vhir.org',
+    trigger_user_name: 'Dr. Xavier Pujol (SJD)',
+    trigger_user_email: 'xpujol@sjd.es',
+    gene: 'SYNGAP1',
+    message: 'El Dr. Xavier Pujol ha consultado coincidencias fenotípicas para el gen SYNGAP1.',
+    is_read: false,
+    created_at: new Date(Date.now() - 7200000).toISOString()
+  }
+];
+
+let userNotifications = JSON.parse(localStorage.getItem('colabhunter_user_notifications')) || defaultDemoNotifications;
+
+function saveUserToStorage() {
+  localStorage.setItem('colabhunter_user', JSON.stringify(currentUser));
+  updateUserUI();
+}
+
+function saveSearchesToStorage() {
+  localStorage.setItem('colabhunter_user_searches', JSON.stringify(userSearches));
+}
+
+function saveNotificationsToStorage() {
+  localStorage.setItem('colabhunter_user_notifications', JSON.stringify(userNotifications));
+  updateNotifBadges();
+}
+
+function updateUserUI() {
+  const widgetBtnName = document.getElementById('user-widget-name');
+  if (widgetBtnName) {
+    widgetBtnName.textContent = currentUser ? currentUser.name : 'Iniciar Sesión';
+  }
+  updateNotifBadges();
+  renderProfileTab();
+}
+
+function updateNotifBadges() {
+  if (!currentUser) return;
+  const unreadCount = userNotifications.filter(n => n.target_user_email === currentUser.email && !n.is_read).length;
+  
+  const bellCount = document.getElementById('notif-bell-count');
+  const navCount = document.getElementById('nav-notif-count');
+  
+  if (bellCount) {
+    bellCount.textContent = unreadCount;
+    bellCount.style.display = unreadCount > 0 ? 'inline-block' : 'none';
+  }
+  if (navCount) {
+    navCount.textContent = unreadCount;
+    navCount.style.display = unreadCount > 0 ? 'inline-block' : 'none';
+  }
+}
+
+function openAuthModal() {
+  const modal = document.getElementById('auth-modal');
+  if (modal) modal.classList.add('active');
+}
+
+function closeAuthModal() {
+  const modal = document.getElementById('auth-modal');
+  if (modal) modal.classList.remove('active');
+}
+
+function switchDemoUser(email) {
+  if (demoAccounts[email]) {
+    currentUser = demoAccounts[email];
+    saveUserToStorage();
+    closeAuthModal();
+    alert(`Has cambiado a la cuenta de: ${currentUser.name} (${currentUser.institution})`);
+  }
+}
+
+function handleCustomAuthSubmit(e) {
+  e.preventDefault();
+  const email = document.getElementById('auth-email-input').value.trim();
+  const name = document.getElementById('auth-name-input').value.trim();
+  const inst = document.getElementById('auth-inst-input').value.trim();
+  
+  if (!email || !name) return;
+
+  const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+
+  currentUser = {
+    name: name,
+    email: email,
+    institution: inst || 'Institución de Investigación',
+    country: 'spain',
+    orcid: 'No especificado',
+    avatar: initials || 'IP'
+  };
+
+  saveUserToStorage();
+  closeAuthModal();
+  alert(`Bienvenido/a ${currentUser.name}. Tu perfil ha sido activado.`);
+}
+
+function openNotificationsModal() {
+  const modal = document.getElementById('notifications-modal');
+  if (!modal) return;
+  renderNotificationsModalList();
+  modal.classList.add('active');
+}
+
+function closeNotificationsModal() {
+  const modal = document.getElementById('notifications-modal');
+  if (modal) modal.classList.remove('active');
+}
+
+function renderNotificationsModalList() {
+  const listElem = document.getElementById('notif-modal-list');
+  if (!listElem) return;
+
+  const myNotifs = userNotifications.filter(n => n.target_user_email === currentUser.email);
+  if (myNotifs.length === 0) {
+    listElem.innerHTML = `
+      <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+        <i class="fa-solid fa-bell-slash" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+        <p>No tienes notificaciones en tu buzón.</p>
+      </div>
+    `;
+    return;
+  }
+
+  listElem.innerHTML = myNotifs.map(n => `
+    <div class="notif-card ${n.is_read ? '' : 'unread'}">
+      <div class="notif-icon-box"><i class="fa-solid fa-bolt"></i></div>
+      <div class="notif-content">
+        <h4>${n.gene ? 'Match Genómico: ' + n.gene : 'Alerta de Coincidencia'}</h4>
+        <p>${n.message}</p>
+        <div class="notif-time">${new Date(n.created_at).toLocaleString()}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function markAllNotificationsRead() {
+  if (!currentUser) return;
+  userNotifications.forEach(n => {
+    if (n.target_user_email === currentUser.email) {
+      n.is_read = true;
+    }
+  });
+  saveNotificationsToStorage();
+  renderNotificationsModalList();
+  renderProfileTab();
+}
+
+async function recordUserSearch(query, type = 'gene') {
+  if (!query || query.length < 2 || !currentUser) return;
+  
+  const searchObj = {
+    id: 'search-' + Date.now(),
+    user_email: currentUser.email,
+    user_name: currentUser.name,
+    search_query: query.toUpperCase(),
+    search_type: type,
+    created_at: new Date().toISOString()
+  };
+
+  userSearches.unshift(searchObj);
+  saveSearchesToStorage();
+
+  if (supabaseClient) {
+    try {
+      await supabaseClient.from('user_searches').insert([searchObj]);
+    } catch (e) {
+      console.warn('Could not record search to Supabase:', e);
+    }
+  }
+
+  triggerCrossNotifications(query.toUpperCase(), type);
+  renderProfileTab();
+}
+
+async function triggerCrossNotifications(query, type) {
+  if (!currentUser) return;
+  
+  const matchingProjects = projectsData.filter(p => 
+    p.email.toLowerCase() !== currentUser.email.toLowerCase() && 
+    (p.gene.toUpperCase() === query || p.title.toUpperCase().includes(query))
+  );
+
+  matchingProjects.forEach(async (proj) => {
+    const notifObj = {
+      id: 'notif-' + Date.now() + '-' + Math.floor(Math.random()*1000),
+      target_user_email: proj.email,
+      trigger_user_name: `${currentUser.name} (${currentUser.institution})`,
+      trigger_user_email: currentUser.email,
+      gene: proj.gene,
+      message: `El investigador ${currentUser.name} (${currentUser.institution}) ha buscado el gen ${proj.gene} registrado en tu cohorte activa.`,
+      is_read: false,
+      created_at: new Date().toISOString()
+    };
+
+    userNotifications.unshift(notifObj);
+    saveNotificationsToStorage();
+
+    if (supabaseClient) {
+      try {
+        await supabaseClient.from('notifications').insert([notifObj]);
+      } catch (e) {
+        console.warn('Could not record notification to Supabase:', e);
+      }
+    }
+  });
+}
+
+function renderProfileTab() {
+  if (!currentUser) return;
+
+  const nameDisp = document.getElementById('profile-name-display');
+  const instDisp = document.getElementById('profile-institution-display');
+  const emailDisp = document.getElementById('profile-email-display');
+  const orcidDisp = document.getElementById('profile-orcid-display');
+  const countryDisp = document.getElementById('profile-country-display');
+  const avatarDisp = document.getElementById('profile-avatar-display');
+
+  if (nameDisp) nameDisp.textContent = currentUser.name;
+  if (instDisp) instDisp.textContent = currentUser.institution;
+  if (emailDisp) emailDisp.textContent = currentUser.email;
+  if (orcidDisp) orcidDisp.textContent = currentUser.orcid || 'No configurado';
+  if (countryDisp) countryDisp.textContent = getCountryLabel(currentUser.country);
+  if (avatarDisp) avatarDisp.textContent = currentUser.avatar || currentUser.name.substring(0,2).toUpperCase();
+
+  const myProjects = projectsData.filter(p => p.email.toLowerCase() === currentUser.email.toLowerCase());
+  const statMyProjects = document.getElementById('stat-my-projects');
+  if (statMyProjects) statMyProjects.textContent = myProjects.length;
+
+  const myProjectsGrid = document.getElementById('my-projects-grid');
+  if (myProjectsGrid) {
+    if (myProjects.length === 0) {
+      myProjectsGrid.innerHTML = `
+        <div style="grid-column: 1/-1; text-align: center; padding: 2rem; background: var(--bg-body); border-radius: var(--radius-md); border: 1px dashed var(--border-color);">
+          <p style="color: var(--text-muted);">No has publicado proyectos desde esta cuenta todavía.</p>
+        </div>
+      `;
+    } else {
+      myProjectsGrid.innerHTML = '';
+      myProjects.forEach(p => {
+        const progressPercent = Math.min(Math.round((p.currentN / p.targetN) * 100), 100);
+        const card = document.createElement('div');
+        card.className = 'project-card';
+        card.innerHTML = `
+          <div>
+            <div class="project-card-header">
+              <span class="gene-badge">${p.gene}</span>
+              <span class="status-badge status-recruiting">${p.statusLabel}</span>
+            </div>
+            <h3 class="project-title">${p.title}</h3>
+            <p class="project-institution">
+              <i class="fa-solid fa-hospital-user color-primary"></i> ${p.institution}
+            </p>
+          </div>
+          <div class="cohort-progress-container">
+            <div class="cohort-progress-label">
+              <span>Progreso: <strong>${p.currentN}</strong> / ${p.targetN} pacientes (${progressPercent}%)</span>
+            </div>
+            <div class="cohort-progress-bar">
+              <div class="cohort-progress-fill" style="width: ${progressPercent}%;"></div>
+            </div>
+          </div>
+        `;
+        myProjectsGrid.appendChild(card);
+      });
+    }
+  }
+
+  const mySearches = userSearches.filter(s => s.user_email === currentUser.email);
+  const statMySearches = document.getElementById('stat-my-searches');
+  if (statMySearches) statMySearches.textContent = mySearches.length;
+
+  const mySearchesList = document.getElementById('my-searches-list');
+  if (mySearchesList) {
+    if (mySearches.length === 0) {
+      mySearchesList.innerHTML = `
+        <tr>
+          <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">
+            No hay búsquedas recientes guardadas en este perfil.
+          </td>
+        </tr>
+      `;
+    } else {
+      mySearchesList.innerHTML = mySearches.map(s => `
+        <tr>
+          <td style="font-size:0.85rem; color:var(--text-muted);">${new Date(s.created_at).toLocaleString()}</td>
+          <td><span class="tag tag-blue">${s.search_type.toUpperCase()}</span></td>
+          <td><strong>${s.search_query}</strong></td>
+          <td><span style="color:var(--accent-teal); font-weight:600;"><i class="fa-solid fa-circle-check"></i> Monitorizado en Supabase</span></td>
+        </tr>
+      `).join('');
+    }
+  }
+
+  const myNotifs = userNotifications.filter(n => n.target_user_email === currentUser.email);
+  const statMyNotifs = document.getElementById('stat-my-notifs');
+  if (statMyNotifs) statMyNotifs.textContent = myNotifs.length;
+
+  const myNotifsList = document.getElementById('my-notifications-list');
+  if (myNotifsList) {
+    if (myNotifs.length === 0) {
+      myNotifsList.innerHTML = `
+        <div style="text-align: center; padding: 2rem; background: var(--bg-body); border-radius: var(--radius-md); color: var(--text-muted);">
+          <p>No tienes notificaciones en tu buzón.</p>
+        </div>
+      `;
+    } else {
+      myNotifsList.innerHTML = myNotifs.map(n => `
+        <div class="notif-card ${n.is_read ? '' : 'unread'}">
+          <div class="notif-icon-box"><i class="fa-solid fa-bolt"></i></div>
+          <div class="notif-content">
+            <h4>${n.gene ? 'Match Genómico: ' + n.gene : 'Alerta de Coincidencia'}</h4>
+            <p>${n.message}</p>
+            <div class="notif-time"><i class="fa-solid fa-clock"></i> ${new Date(n.created_at).toLocaleString()}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+  }
+}
   </script>
 </body>
 </html>

@@ -90,3 +90,73 @@ VALUES
   'public'
 )
 ON CONFLICT (id) DO NOTHING;
+
+-- ==========================================================================
+-- 6. Create User Searches Table (Historial de Búsquedas Persistente)
+-- ==========================================================================
+CREATE TABLE IF NOT EXISTS public.user_searches (
+    id TEXT PRIMARY KEY,
+    user_email TEXT NOT NULL,
+    user_name TEXT NOT NULL,
+    search_query TEXT NOT NULL,
+    search_type TEXT NOT NULL DEFAULT 'gene',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_user_searches_email ON public.user_searches (user_email);
+ALTER TABLE public.user_searches ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public read searches" ON public.user_searches FOR SELECT USING (true);
+CREATE POLICY "Allow public insert searches" ON public.user_searches FOR INSERT WITH CHECK (true);
+
+-- Insert Demo User Searches
+INSERT INTO public.user_searches (id, user_email, user_name, search_query, search_type)
+VALUES 
+  ('search-001', 'xpujol@sjd.es', 'Dr. Xavier Pujol', 'KCNQ2', 'gene'),
+  ('search-002', 'xpujol@sjd.es', 'Dr. Xavier Pujol', 'HP:0001250 Seizures', 'hpo'),
+  ('search-003', 'elena.ramos@vhir.org', 'Dra. Elena Ramos', 'SYNGAP1', 'gene')
+ON CONFLICT (id) DO NOTHING;
+
+-- ==========================================================================
+-- 7. Create Notifications Table (Buzón de Notificaciones de Matches)
+-- ==========================================================================
+CREATE TABLE IF NOT EXISTS public.notifications (
+    id TEXT PRIMARY KEY,
+    target_user_email TEXT NOT NULL,
+    trigger_user_name TEXT NOT NULL,
+    trigger_user_email TEXT NOT NULL,
+    gene TEXT,
+    hpo_term TEXT,
+    message TEXT NOT NULL,
+    is_read BOOLEAN NOT NULL DEFAULT false,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_notifications_target ON public.notifications (target_user_email);
+ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public read notifications" ON public.notifications FOR SELECT USING (true);
+CREATE POLICY "Allow public insert notifications" ON public.notifications FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow public update notifications" ON public.notifications FOR UPDATE USING (true);
+
+-- Insert Demo Notifications
+INSERT INTO public.notifications (id, target_user_email, trigger_user_name, trigger_user_email, gene, message, is_read)
+VALUES 
+  (
+    'notif-001', 
+    'xpujol@sjd.es', 
+    'Dra. Elena Ramos (HUVH)', 
+    'elena.ramos@vhir.org', 
+    'KCNQ2', 
+    'La Dra. Elena Ramos ha buscado el gen KCNQ2 registrado en tu cohorte activa.', 
+    false
+  ),
+  (
+    'notif-002', 
+    'elena.ramos@vhir.org', 
+    'Dr. Xavier Pujol (SJD)', 
+    'xpujol@sjd.es', 
+    'SYNGAP1', 
+    'El Dr. Xavier Pujol ha consultado coincidencias fenotípicas para el gen SYNGAP1.', 
+    false
+  )
+ON CONFLICT (id) DO NOTHING;
+
