@@ -2736,8 +2736,20 @@ function setupFilters() {
     renderProjectsGrid(filtered);
   };
 
-  searchGene.removeEventListener('input', applyFilters);
-  searchGene.addEventListener('input', applyFilters);
+  let searchTimeout = null;
+  const handleSearchInput = () => {
+    applyFilters();
+    const geneVal = searchGene.value.trim();
+    if (geneVal.length >= 2) {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        recordUserSearch(geneVal, 'gene');
+      }, 600);
+    }
+  };
+
+  searchGene.removeEventListener('input', handleSearchInput);
+  searchGene.addEventListener('input', handleSearchInput);
 
   filterRegion.removeEventListener('change', applyFilters);
   filterRegion.addEventListener('change', applyFilters);
@@ -2745,8 +2757,18 @@ function setupFilters() {
   filterStatus.removeEventListener('change', applyFilters);
   filterStatus.addEventListener('change', applyFilters);
 
-  filterHpo.removeEventListener('change', applyFilters);
-  filterHpo.addEventListener('change', applyFilters);
+  filterHpo.removeEventListener('change', () => {
+    applyFilters();
+    if (filterHpo.value !== 'all') {
+      recordUserSearch(`Fenotipo HPO: ${filterHpo.value}`, 'hpo');
+    }
+  });
+  filterHpo.addEventListener('change', () => {
+    applyFilters();
+    if (filterHpo.value !== 'all') {
+      recordUserSearch(`Fenotipo HPO: ${filterHpo.value}`, 'hpo');
+    }
+  });
 
   resetBtn.addEventListener('click', () => {
     searchGene.value = '';
@@ -3534,7 +3556,7 @@ async function triggerCrossNotifications(query, type) {
   
   const matchingProjects = projectsData.filter(p => 
     p.email.toLowerCase() !== currentUser.email.toLowerCase() && 
-    (p.gene.toUpperCase() === query || p.title.toUpperCase().includes(query))
+    (p.gene.toUpperCase().includes(query) || query.includes(p.gene.toUpperCase()) || p.title.toUpperCase().includes(query))
   );
 
   matchingProjects.forEach(async (proj) => {
