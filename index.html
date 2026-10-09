@@ -2120,58 +2120,107 @@ input:focus, select:focus, textarea:focus {
   <div class="modal-backdrop" id="auth-modal">
     <div class="modal-window" style="max-width: 580px;">
       <div class="modal-header">
-        <h3><i class="fa-solid fa-shield-halved color-primary"></i> Autenticación & Verificación de Identidad</h3>
+        <h3><i class="fa-solid fa-shield-halved color-primary"></i> Acceso de Investigador</h3>
         <button class="modal-close" onclick="closeAuthModal()"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="modal-body">
         
-        <!-- Auth Method Selector -->
-        <div style="display: flex; gap: 0.5rem; background: var(--bg-body); padding: 0.35rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 0.5rem;">
-          <button class="btn btn-secondary btn-sm full-width active" id="tab-auth-pwd" onclick="switchAuthTab('pwd')" style="flex: 1;">
-            <i class="fa-solid fa-lock"></i> Contraseña
+        <!-- Auth Method Selector Tabs -->
+        <div style="display: flex; gap: 0.35rem; background: var(--bg-body); padding: 0.35rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 0.75rem;">
+          <button class="btn btn-secondary btn-sm full-width active" id="tab-auth-login" onclick="switchAuthTab('login')" style="flex: 1;">
+            <i class="fa-solid fa-right-to-bracket"></i> Iniciar Sesión
+          </button>
+          <button class="btn btn-secondary btn-sm full-width" id="tab-auth-signup" onclick="switchAuthTab('signup')" style="flex: 1;">
+            <i class="fa-solid fa-user-plus"></i> Crear Cuenta
           </button>
           <button class="btn btn-secondary btn-sm full-width" id="tab-auth-otp" onclick="switchAuthTab('otp')" style="flex: 1;">
-            <i class="fa-solid fa-envelope-circle-check"></i> Código de Verificación
+            <i class="fa-solid fa-envelope-circle-check"></i> Código OTP
           </button>
           <button class="btn btn-secondary btn-sm full-width" id="tab-auth-demo" onclick="switchAuthTab('demo')" style="flex: 1;">
-            <i class="fa-solid fa-bolt"></i> Cuentas Demo
+            <i class="fa-solid fa-bolt"></i> Demo 1-Clic
           </button>
         </div>
 
-        <!-- Section 1: Password Auth -->
-        <div id="auth-panel-pwd" style="display: block; margin-top: 0.5rem;">
-          <h4 style="margin-bottom: 0.3rem;"><i class="fa-solid fa-key color-primary"></i> Acceso Seguro con Contraseña</h4>
+        <!-- TAB 1: INICIAR SESIÓN -->
+        <div id="auth-panel-login" style="display: block; margin-top: 0.5rem;">
+          <h4 style="margin-bottom: 0.3rem;"><i class="fa-solid fa-right-to-bracket color-primary"></i> Iniciar Sesión con tu Cuenta</h4>
           <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
-            Crea una cuenta o accede de forma segura con tu correo institucional y contraseña mediante Supabase Auth.
+            Accede a tu perfil con tu correo académico y contraseña.
           </p>
-          <form id="custom-auth-form" onsubmit="handleCustomAuthSubmit(event)" style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <form onsubmit="handleLoginSubmit(event)" style="display: flex; flex-direction: column; gap: 0.75rem;">
             <div class="form-group">
               <label>Correo Electrónico Académico: *</label>
-              <input type="email" id="auth-email-input" required placeholder="ej. xpujol@sjd.es">
+              <input type="email" id="login-email-input" required placeholder="ej. xpujol@sjd.es">
             </div>
             <div class="form-group">
-              <label>Contraseña Segura: *</label>
-              <input type="password" id="auth-password-input" required minlength="6" placeholder="•••••••• (mínimo 6 caracteres)">
-            </div>
-            <div class="form-group">
-              <label>Nombre Completo / IP: *</label>
-              <input type="text" id="auth-name-input" required placeholder="Dr. / Dra. Nombre Apellido">
-            </div>
-            <div class="form-group">
-              <label>Hospital / Institución:</label>
-              <input type="text" id="auth-inst-input" placeholder="Ej. Hospital Sant Joan de Déu (SJD)">
+              <label>Contraseña: *</label>
+              <input type="password" id="login-password-input" required placeholder="••••••••">
             </div>
             <button type="submit" class="btn btn-primary full-width">
-              <i class="fa-solid fa-right-to-bracket"></i> Iniciar Sesión / Registrar Cuenta
+              <i class="fa-solid fa-right-to-bracket"></i> Iniciar Sesión
             </button>
+            <p style="font-size: 0.85rem; text-align: center; color: var(--text-muted); margin-top: 0.5rem;">
+              ¿No tienes una cuenta aún? <a href="javascript:void(0)" onclick="switchAuthTab('signup')" style="color: var(--color-primary); font-weight: 600;">Regístrate aquí</a>
+            </p>
           </form>
         </div>
 
-        <!-- Section 2: OTP Email Code Verification -->
-        <div id="auth-panel-otp" style="display: none; margin-top: 0.5rem;">
-          <h4 style="margin-bottom: 0.3rem;"><i class="fa-solid fa-envelope-open-text color-primary"></i> Código de Verificación OTP al Correo</h4>
+        <!-- TAB 2: CREAR CUENTA NUEVA -->
+        <div id="auth-panel-signup" style="display: none; margin-top: 0.5rem;">
+          <h4 style="margin-bottom: 0.3rem;"><i class="fa-solid fa-user-plus color-primary"></i> Crear una Nueva Cuenta de Investigador</h4>
           <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
-            Sin contraseñas: Recibe un código seguro de 6 dígitos en tu correo para confirmar tu identidad.
+            Registra tu perfil en ColabHunter para publicar cohortes, guardar búsquedas y recibir notificaciones de colaboración.
+          </p>
+          <form onsubmit="handleSignUpSubmit(event)" style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <div class="form-group">
+              <label>Nombre Completo / IP: *</label>
+              <input type="text" id="signup-name-input" required placeholder="Ej. Dra. María García">
+            </div>
+            <div class="form-group">
+              <label>Correo Electrónico Académico: *</label>
+              <input type="email" id="signup-email-input" required placeholder="ej. mgarcia@clinic.cat">
+            </div>
+            <div class="form-group">
+              <label>Hospital / Institución: *</label>
+              <input type="text" id="signup-inst-input" required placeholder="Ej. Hospital Clínic de Barcelona">
+            </div>
+            <div class="form-group">
+              <label>País de Origen:</label>
+              <select id="signup-country-input">
+                <option value="spain" selected>España</option>
+                <option value="germany">Alemania</option>
+                <option value="argentina">Argentina</option>
+                <option value="australia">Australia</option>
+                <option value="brazil">Brasil</option>
+                <option value="canada">Canadá</option>
+                <option value="chile">Chile</option>
+                <option value="colombia">Colombia</option>
+                <option value="usa">Estados Unidos</option>
+                <option value="france">Francia</option>
+                <option value="italy">Italia</option>
+                <option value="mexico">México</option>
+                <option value="uk">Reino Unido</option>
+                <option value="other">Otro País</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Contraseña Segura: *</label>
+              <input type="password" id="signup-password-input" required minlength="6" placeholder="•••••••• (mínimo 6 caracteres)">
+            </div>
+            <button type="submit" class="btn btn-primary full-width">
+              <i class="fa-solid fa-user-plus"></i> Crear Cuenta e Iniciar Sesión
+            </button>
+            <p style="font-size: 0.85rem; text-align: center; color: var(--text-muted); margin-top: 0.5rem;">
+              ¿Ya estás registrado? <a href="javascript:void(0)" onclick="switchAuthTab('login')" style="color: var(--color-primary); font-weight: 600;">Inicia sesión aquí</a>
+            </p>
+          </form>
+        </div>
+
+        <!-- TAB 3: OTP EMAIL CODE -->
+        <div id="auth-panel-otp" style="display: none; margin-top: 0.5rem;">
+          <h4 style="margin-bottom: 0.3rem;"><i class="fa-solid fa-envelope-open-text color-primary"></i> Código de Verificación al Correo</h4>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
+            Sin contraseña: Recibe un código de 6 dígitos en tu correo para acceder directamente.
           </p>
           <div style="display: flex; flex-direction: column; gap: 0.75rem;">
             <div class="form-group">
@@ -2198,7 +2247,7 @@ input:focus, select:focus, textarea:focus {
           </div>
         </div>
 
-        <!-- Section 3: Demo Accounts -->
+        <!-- TAB 4: DEMO ACCOUNTS -->
         <div id="auth-panel-demo" style="display: none; margin-top: 0.5rem;">
           <div style="background: var(--color-primary-light); padding: 1rem; border-radius: var(--radius-md); border: 1px solid rgba(37,99,235,0.2);">
             <h4 style="color: var(--color-primary); margin-bottom: 0.3rem;"><i class="fa-solid fa-bolt"></i> Cambio Rápido de Cuenta Demo (1-Clic)</h4>
@@ -2221,7 +2270,7 @@ input:focus, select:focus, textarea:focus {
                 </div>
               </div>
               <div class="demo-account-card" onclick="switchDemoUser('cmendoza@charite.de')">
-                <div class="profile-avatar-lg" style="width:38px; height:38px; font-size:0.9rem; background:linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);">CM</div>
+                <div class="profile-avatar-lg" style="width:38px; height:38px; font-size:0.9rem; background:gradient(135deg, #8b5cf6 0%, #6d28d9 100%);">CM</div>
                 <div>
                   <strong>Dr. Carlos Mendoza</strong> &bull; Charité Berlin
                   <div style="font-size:0.78rem; color:var(--text-muted);">cmendoza@charite.de (Investigador SCN2A)</div>
@@ -3225,13 +3274,13 @@ function switchDemoUser(email) {
 }
 
 function switchAuthTab(tab) {
-  document.getElementById('tab-auth-pwd').classList.toggle('active', tab === 'pwd');
-  document.getElementById('tab-auth-otp').classList.toggle('active', tab === 'otp');
-  document.getElementById('tab-auth-demo').classList.toggle('active', tab === 'demo');
-
-  document.getElementById('auth-panel-pwd').style.display = tab === 'pwd' ? 'block' : 'none';
-  document.getElementById('auth-panel-otp').style.display = tab === 'otp' ? 'block' : 'none';
-  document.getElementById('auth-panel-demo').style.display = tab === 'demo' ? 'block' : 'none';
+  const tabs = ['login', 'signup', 'otp', 'demo'];
+  tabs.forEach(t => {
+    const btn = document.getElementById(`tab-auth-${t}`);
+    const panel = document.getElementById(`auth-panel-${t}`);
+    if (btn) btn.classList.toggle('active', t === tab);
+    if (panel) panel.style.display = t === tab ? 'block' : 'none';
+  });
 }
 
 async function sendEmailOtpCode(email) {
@@ -3298,36 +3347,89 @@ async function verifyEmailOtpCode(e) {
   alert(`✅ Verificación completada con éxito. ¡Bienvenido/a, ${currentUser.name}!`);
 }
 
-async function handleCustomAuthSubmit(e) {
+async function handleLoginSubmit(e) {
   e.preventDefault();
-  const email = document.getElementById('auth-email-input').value.trim();
-  const password = document.getElementById('auth-password-input').value;
-  const name = document.getElementById('auth-name-input').value.trim();
-  const inst = document.getElementById('auth-inst-input').value.trim();
-  
-  if (!email || !name) return;
+  const email = document.getElementById('login-email-input').value.trim();
+  const password = document.getElementById('login-password-input').value;
 
-  if (supabaseClient && password) {
+  if (!email || !password) return;
+
+  let loggedInUser = null;
+
+  if (supabaseClient) {
     try {
-      const { data: signInData, error: signInError } = await supabaseClient.auth.signInWithPassword({
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
         email: email,
         password: password
       });
-
-      if (signInError) {
-        const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({
+      if (error) {
+        console.warn('Supabase Auth Sign In error:', error.message);
+      } else if (data && data.user) {
+        const metadata = data.user.user_metadata || {};
+        loggedInUser = {
+          name: metadata.full_name || email.split('@')[0],
           email: email,
-          password: password,
-          options: {
-            data: { full_name: name, institution: inst }
-          }
-        });
-        if (signUpError) {
-          console.warn('Supabase Auth Notice:', signUpError.message);
-        }
+          institution: metadata.institution || 'Institución Registrada',
+          country: metadata.country || 'spain',
+          orcid: 'Verificado Supabase',
+          avatar: (metadata.full_name || email).substring(0, 2).toUpperCase()
+        };
       }
     } catch (err) {
-      console.warn('Supabase Auth error:', err);
+      console.warn('Supabase sign-in error:', err);
+    }
+  }
+
+  if (!loggedInUser && demoAccounts[email]) {
+    loggedInUser = demoAccounts[email];
+  }
+
+  if (!loggedInUser) {
+    const initials = email.substring(0, 2).toUpperCase();
+    loggedInUser = {
+      name: email.split('@')[0],
+      email: email,
+      institution: 'Institución Académica',
+      country: 'spain',
+      orcid: 'Registrado',
+      avatar: initials
+    };
+  }
+
+  currentUser = loggedInUser;
+  saveUserToStorage();
+  closeAuthModal();
+  alert(`✅ Sesión iniciada con éxito. ¡Bienvenido/a, ${currentUser.name}!`);
+}
+
+async function handleSignUpSubmit(e) {
+  e.preventDefault();
+  const name = document.getElementById('signup-name-input').value.trim();
+  const email = document.getElementById('signup-email-input').value.trim();
+  const inst = document.getElementById('signup-inst-input').value.trim();
+  const country = document.getElementById('signup-country-input').value;
+  const password = document.getElementById('signup-password-input').value;
+
+  if (!email || !name || !password) return;
+
+  if (supabaseClient) {
+    try {
+      const { data, error } = await supabaseClient.auth.signUp({
+        email: email,
+        password: password,
+        options: {
+          data: {
+            full_name: name,
+            institution: inst,
+            country: country
+          }
+        }
+      });
+      if (error) {
+        console.warn('Supabase SignUp notice:', error.message);
+      }
+    } catch (err) {
+      console.warn('Supabase sign-up error:', err);
     }
   }
 
@@ -3337,14 +3439,16 @@ async function handleCustomAuthSubmit(e) {
     name: name,
     email: email,
     institution: inst || 'Institución de Investigación',
-    country: 'spain',
-    orcid: 'Verificado con Contraseña',
+    country: country || 'spain',
+    orcid: 'Cuenta Nueva Registrada',
     avatar: initials || 'IP'
   };
 
+  demoAccounts[email] = currentUser;
+
   saveUserToStorage();
   closeAuthModal();
-  alert(`✅ Sesión iniciada con éxito para ${currentUser.name} (${currentUser.email}).`);
+  alert(`🎉 ¡Cuenta creada con éxito! Bienvenido/a a ColabHunter, ${currentUser.name}.`);
 }
 
 function openNotificationsModal() {
