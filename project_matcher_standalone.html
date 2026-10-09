@@ -2605,7 +2605,7 @@ const defaultDemoProjects = [
     gene: 'SYNGAP1',
     title: 'Estudio transcriptor de haploinsuficiencia en SYNGAP1 y respuesta a moduladores moleculares',
     ip: 'Dra. Elena Ramos',
-    institution: 'Hospital Universitari Vall d\'Hebron (HUVH)',
+    institution: 'Hospital Universitari Vall d'Hebron (HUVH)',
     region: 'spain',
     email: 'elena.ramos@vhir.org',
     github: 'https://github.com/ramos-lab-vhir',
@@ -2624,14 +2624,117 @@ const defaultDemoProjects = [
     models: ['Modelos Animales (Ratón / Drosophila)', 'Organoides cerebrales'],
     description: 'Proyecto enfocado en descifrar el espectro fenotípico de SYNGAP1 y validar tratamientos de lectura de codones de parada. Interesados en incorporar pacientes de hospitales catalanes e internacionales.',
     visibility: 'public'
+  },
+  {
+    id: 'proj-003',
+    gene: 'SCN2A',
+    title: 'Análisis electrofisiológico in vitro de variantes de canal de sodio NaV1.2',
+    ip: 'Dr. Carlos Mendoza',
+    institution: 'Charité Universitätsmedizin Berlin',
+    region: 'germany',
+    email: 'cmendoza@charite.de',
+    github: 'https://github.com/mendoza-neuro-charite',
+    orcid: '0000-0003-8821-1902',
+    phone: '+49 30 450 5000',
+    mechanism: 'Gain-of-Function (GoF)',
+    hpoTerms: [
+      { code: 'HP:0001250', name: 'Seizures' },
+      { code: 'HP:0001249', name: 'Intellectual disability' }
+    ],
+    currentN: 12,
+    targetN: 25,
+    status: 'functional',
+    statusLabel: 'Validación Funcional en Curso',
+    models: ['Electrofisiología / Patch-clamp', 'Simulación Estructural 3D'],
+    description: 'Evaluación del perfil de activación y desensibilización del canal NaV1.2 en mutaciones SCN2A tempranas.',
+    visibility: 'public'
+  },
+  {
+    id: 'proj-004',
+    gene: 'CDKL5',
+    title: 'Caracterización fenotípica profunda y biomarcadores en Síndrome CDKL5',
+    ip: 'Dra. Sarah Jenkins',
+    institution: 'Boston Children's Hospital / Harvard Medical School',
+    region: 'usa',
+    email: 'sarah.jenkins@childrens.harvard.edu',
+    github: 'https://github.com/jenkins-cdkl5-lab',
+    orcid: '0000-0002-4410-0912',
+    phone: '+1 617 355 6000',
+    mechanism: 'Loss-of-Function (LoF)',
+    hpoTerms: [
+      { code: 'HP:0002376', name: 'Developmental encephalopathy' },
+      { code: 'HP:0001250', name: 'Seizures' }
+    ],
+    currentN: 15,
+    targetN: 30,
+    status: 'manuscript',
+    statusLabel: 'Buscando Casos para Manuscrito',
+    models: ['Biobanco Muestras ADN / ARN', 'Líneas iPSC derivadas'],
+    description: 'Consorcio internacional para correlación genotipo-fenotipo y redacción de consenso clínico.',
+    visibility: 'public'
+  },
+  {
+    id: 'proj-005',
+    gene: 'STXBP1',
+    title: 'Estudio de tráfico vesicular presináptico en encefalopatía por STXBP1',
+    ip: 'Dr. Mateo Rossi',
+    institution: 'Ospedale San Raffaele Milano',
+    region: 'italy',
+    email: 'm.rossi@hsr.it',
+    github: 'https://github.com/rossi-synapse-lab',
+    orcid: '0000-0001-7712-4099',
+    phone: '+39 02 26431',
+    mechanism: 'Loss-of-Function (LoF)',
+    hpoTerms: [
+      { code: 'HP:0001252', name: 'Hypotonia' },
+      { code: 'HP:0001263', name: 'Global developmental delay' }
+    ],
+    currentN: 8,
+    targetN: 18,
+    status: 'recruiting',
+    statusLabel: 'Reclutando Cohorte',
+    models: ['Modelos Animales (Ratón / Drosophila)', 'Líneas iPSC derivadas'],
+    description: 'Modelización de la exocitosis de neurotransmisores en neuronas corticales derivadas de iPSC.',
+    visibility: 'public'
+  },
+  {
+    id: 'proj-006',
+    gene: 'MECP2',
+    title: 'Recopilación de cohortes atypical Rett y análisis de metilación genómica',
+    ip: 'Dra. Carmen Fernández',
+    institution: 'Hospital Universitario La Paz',
+    region: 'spain',
+    email: 'carmen.fernandez@salud.madrid.org',
+    github: 'https://github.com/fernandez-rett-lapaz',
+    orcid: '0000-0002-9901-2234',
+    phone: '+34 917 277 000',
+    mechanism: 'Loss-of-Function (LoF)',
+    hpoTerms: [
+      { code: 'HP:0001263', name: 'Global developmental delay' },
+      { code: 'HP:0000729', name: 'Autistic behavior' }
+    ],
+    currentN: 10,
+    targetN: 25,
+    status: 'recruiting',
+    statusLabel: 'Reclutando Cohorte',
+    models: ['Biobanco Muestras ADN / ARN'],
+    description: 'Estudio de variabilidad de inactivación del cromosoma X en niñas con variaciones en MECP2.',
+    visibility: 'public'
   }
 ];
 
-// Load from localStorage if present, or start with demo projects
+// Load from localStorage if present and valid, or start with demo projects
 let storedProjects = localStorage.getItem('colabhunter_projects');
-let projectsData = storedProjects ? JSON.parse(storedProjects) : [...defaultDemoProjects];
+let parsedProjects = null;
+try {
+  parsedProjects = storedProjects ? JSON.parse(storedProjects) : null;
+} catch(e) {
+  console.warn('localStorage parse error:', e);
+}
 
-// Supabase Cloud Configuration (Configured)
+let projectsData = (parsedProjects && Array.isArray(parsedProjects) && parsedProjects.length > 0) ? parsedProjects : [...defaultDemoProjects];
+
+// Supabase Cloud Configuration
 let supabaseUrl = localStorage.getItem('colabhunter_supabase_url') || 'https://abogmjikrhrkqcpckfdi.supabase.co';
 let supabaseKey = localStorage.getItem('colabhunter_supabase_key') || 'sb_publishable_Otxdl-UMR8B2YugKYpebUQ_v1n9_jXy';
 let supabaseClient = null;
@@ -2651,7 +2754,7 @@ async function fetchProjectsFromCloud() {
   if (!supabaseClient) return false;
   try {
     const { data, error } = await supabaseClient.from('projects').select('*').order('created_at', { ascending: false });
-    if (!error && data && data.length >= 0) {
+    if (!error && data && data.length > 0) {
       projectsData = data.map(dbItem => ({
         id: dbItem.id,
         gene: dbItem.gene,
@@ -2665,16 +2768,17 @@ async function fetchProjectsFromCloud() {
         phone: dbItem.phone,
         mechanism: dbItem.mechanism,
         hpoTerms: typeof dbItem.hpo_terms === 'string' ? JSON.parse(dbItem.hpo_terms) : (dbItem.hpo_terms || []),
-        currentN: dbItem.current_n,
-        targetN: dbItem.target_n,
-        status: dbItem.status,
-        statusLabel: dbItem.status_label,
+        currentN: dbItem.current_n || 1,
+        targetN: dbItem.target_n || 10,
+        status: dbItem.status || 'recruiting',
+        statusLabel: dbItem.status_label || 'Reclutando Cohorte',
         models: typeof dbItem.models === 'string' ? JSON.parse(dbItem.models) : (dbItem.models || []),
         description: dbItem.description,
-        visibility: dbItem.visibility
+        visibility: dbItem.visibility || 'public'
       }));
       saveProjectsToStorage();
       renderProjectsGrid(projectsData);
+      renderProfileTab();
       return true;
     }
   } catch (err) {
@@ -2762,10 +2866,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   initNavigation();
   initSlideDeck();
   initSupabase();
-  const loadedCloud = await fetchProjectsFromCloud();
-  if (!loadedCloud) {
-    renderProjectsGrid(projectsData);
-  }
+  renderProjectsGrid(projectsData);
+  renderProfileTab();
+  await fetchProjectsFromCloud();
   initProjectForm();
   initMatchSimulator();
   initModalControls();
