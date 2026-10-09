@@ -1390,7 +1390,78 @@ input:focus, select:focus, textarea:focus {
     grid-template-columns: 1fr;
   }
 }
-  </style>
+  
+/* Collapsible Accordion Cards */
+.accordion-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  margin-top: 1.15rem;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+.accordion-card.open {
+  border-color: var(--border-accent);
+  box-shadow: var(--shadow-md);
+}
+.accordion-header {
+  padding: 1.1rem 1.35rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+  background: var(--bg-card);
+  transition: background 0.2s ease;
+}
+.accordion-header:hover {
+  background: var(--bg-card-hover);
+}
+.accordion-title-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.accordion-icon-badge {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+.accordion-chevron {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  transition: transform 0.3s ease, background 0.2s ease;
+}
+.accordion-card.open .accordion-chevron {
+  transform: rotate(180deg);
+  color: var(--accent-primary);
+  background: rgba(37, 99, 235, 0.1);
+}
+.accordion-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s ease;
+  padding: 0 1.35rem;
+}
+.accordion-card.open .accordion-body {
+  max-height: 3000px;
+  padding: 0 1.35rem 1.35rem 1.35rem;
+  border-top: 1px solid var(--border-color);
+}
+
+</style>
 </head>
 <body class="light-theme">
 
@@ -1472,99 +1543,119 @@ input:focus, select:focus, textarea:focus {
             </div>
           </div>
 
-          <!-- Demo Account Selector -->
-          <div style="background: var(--bg-body); padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-top: 1rem;">
-            <span style="font-weight: 700; font-size: 0.85rem; color: var(--text-secondary); display: block; margin-bottom: 0.4rem;">
-              <i class="fa-solid fa-user-gear color-primary"></i> Simular Cambio de Perfil (Prueba Multi-Usuario):
-            </span>
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-              <button class="btn btn-secondary btn-sm" onclick="switchDemoUser('xpujol@sjd.es')">
-                <i class="fa-solid fa-user-doctor"></i> Dr. Xavier Pujol (SJD)
-              </button>
-              <button class="btn btn-secondary btn-sm" onclick="switchDemoUser('elena.ramos@vhir.org')">
-                <i class="fa-solid fa-user-doctor"></i> Dra. Elena Ramos (Vall d'Hebron)
-              </button>
-              <button class="btn btn-secondary btn-sm" onclick="switchDemoUser('cmendoza@charite.de')">
-                <i class="fa-solid fa-user-doctor"></i> Dr. Carlos Mendoza (Charité)
-              </button>
-            </div>
-          </div>
-
           <!-- Stats KPI Row -->
-          <div class="profile-stats-row" style="margin-top: 1rem;">
-            <div class="profile-stat-box">
+          <div class="profile-stats-row" style="margin-top: 1.25rem;">
+            <div class="profile-stat-box" onclick="toggleAccordion('accordion-projects')" style="cursor: pointer;">
               <div class="num" id="stat-my-projects">1</div>
               <div class="label">Mis Proyectos Publicados</div>
             </div>
-            <div class="profile-stat-box">
+            <div class="profile-stat-box" onclick="toggleAccordion('accordion-searches')" style="cursor: pointer;">
               <div class="num" id="stat-my-searches">2</div>
               <div class="label">Mis Búsquedas / Queries (Genes)</div>
             </div>
-            <div class="profile-stat-box highlight-stat">
-              <div class="num" id="stat-my-alerts-matches" style="color: #D97706;">1</div>
+            <div class="profile-stat-box highlight-stat" onclick="toggleAccordion('accordion-alerts')" style="cursor: pointer;">
+              <div class="num" id="stat-my-alerts-matches" style="color: #D97706;">2</div>
               <div class="label">Coincidencias & Alertas en Mis Genes</div>
             </div>
           </div>
         </div>
 
-        <!-- SECCIÓN DESTACADA: ALERTAS & INTERÉS DETECTADO EN MIS GENES DE INTERÉS -->
-        <div class="explorer-card" style="margin-top: 1.25rem; border: 1.5px solid rgba(245, 158, 11, 0.4); background: linear-gradient(180deg, rgba(245,158,11,0.05) 0%, var(--bg-card) 100%);">
-          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
-            <h3 style="color: #D97706; display: flex; align-items: center; gap: 0.5rem; font-size: 1.15rem;">
-              <i class="fa-solid fa-triangle-exclamation" style="font-size: 1.25rem;"></i>
-              Alertas de Interés Detectado sobre tus Genes de Interés
-            </h3>
-            <span class="badge-global" style="background: rgba(245, 158, 11, 0.15); color: #B45309; border: 1px solid rgba(245,158,11,0.3);">
-              <i class="fa-solid fa-bolt"></i> Detección en Tiempo Real
-            </span>
+        <!-- ACCORDION 1: ALERTAS & INTERÉS DETECTADO EN MIS GENES -->
+        <div class="accordion-card open" id="accordion-alerts" style="border: 1.5px solid rgba(245, 158, 11, 0.4);">
+          <div class="accordion-header" onclick="toggleAccordion('accordion-alerts')" style="background: linear-gradient(90deg, rgba(245,158,11,0.08) 0%, var(--bg-card) 100%);">
+            <div class="accordion-title-group">
+              <div class="accordion-icon-badge" style="background: rgba(245, 158, 11, 0.15); color: #D97706;">
+                <i class="fa-solid fa-bell"></i>
+              </div>
+              <div>
+                <h3 style="font-size: 1.1rem; margin: 0; color: #D97706; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                  Coincidencias & Alertas en Mis Genes
+                  <span class="badge-global" id="accordion-alerts-badge" style="background: #F59E0B; color: white; font-weight: 800; font-size: 0.75rem; padding: 0.15rem 0.55rem;">2 Alertas</span>
+                </h3>
+                <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">Investigadores que buscan o publican sobre tus mismos genes de interés</p>
+              </div>
+            </div>
+            <div class="accordion-chevron">
+              <i class="fa-solid fa-chevron-down"></i>
+            </div>
           </div>
-          <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">
-            A continuación se muestran los investigadores que han buscado o publicado sobre los mismos genes en los que tienes cohortes de investigación activas:
-          </p>
-
-          <div id="my-gene-alerts-box" style="display: flex; flex-direction: column; gap: 0.85rem;">
-            <!-- Rendered dynamically via JS -->
-          </div>
-        </div>
-
-        <!-- SECCIÓN: MIS PROYECTOS PUBLICADOS -->
-        <div class="explorer-card" style="margin-top: 1.25rem;">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
-            <h3><i class="fa-solid fa-folder-open color-primary"></i> Mis Proyectos Publicados en ColabHunter</h3>
-            <button class="btn btn-primary btn-sm" onclick="openPublishModal()">
-              <i class="fa-solid fa-plus-circle"></i> Publicar Nuevo Proyecto
-            </button>
-          </div>
-          <div id="my-projects-grid" class="projects-grid">
-            <!-- Rendered dynamically via JS -->
+          <div class="accordion-body">
+            <div id="my-gene-alerts-box" style="display: flex; flex-direction: column; gap: 0.85rem; padding-top: 0.75rem;">
+              <!-- Rendered dynamically via JS -->
+            </div>
           </div>
         </div>
 
-        <!-- SECCIÓN: MIS QUERIES (HISTORIAL DE BÚSQUEDAS DE GENES) -->
-        <div class="explorer-card" style="margin-top: 1.25rem;">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
-            <h3><i class="fa-solid fa-clock-rotate-left color-primary"></i> Mis Queries / Búsquedas de Genes Realizadas</h3>
-            <span style="font-size: 0.85rem; color: var(--text-muted);"><i class="fa-solid fa-database"></i> Sincronizado en Supabase PostgreSQL</span>
+        <!-- ACCORDION 2: MIS PROYECTOS PUBLICADOS -->
+        <div class="accordion-card" id="accordion-projects">
+          <div class="accordion-header" onclick="toggleAccordion('accordion-projects')">
+            <div class="accordion-title-group">
+              <div class="accordion-icon-badge" style="background: rgba(37, 99, 235, 0.12); color: var(--accent-primary);">
+                <i class="fa-solid fa-folder-open"></i>
+              </div>
+              <div>
+                <h3 style="font-size: 1.1rem; margin: 0; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                  Mis Proyectos Publicados en ColabHunter
+                  <span class="badge-global" id="accordion-projects-badge" style="background: var(--accent-primary); color: white; font-weight: 800; font-size: 0.75rem; padding: 0.15rem 0.55rem;">1 Proyecto</span>
+                </h3>
+                <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">Tus cohortes y estudios registrados en el catálogo internacional</p>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); openPublishModal();" style="border-radius: 20px; font-weight: 700;">
+                <i class="fa-solid fa-plus-circle"></i> Publicar Proyecto
+              </button>
+              <div class="accordion-chevron">
+                <i class="fa-solid fa-chevron-down"></i>
+              </div>
+            </div>
           </div>
-          <div class="history-table-container">
-            <table class="history-table">
-              <thead>
-                <tr>
-                  <th>Fecha & Hora</th>
-                  <th>Tipo</th>
-                  <th>Consulta Guardada</th>
-                  <th>Estado en la Red</th>
-                </tr>
-              </thead>
-              <tbody id="my-searches-list">
-                <!-- Rendered dynamically via JS -->
-              </tbody>
-            </table>
+          <div class="accordion-body">
+            <div id="my-projects-grid" class="projects-grid" style="padding-top: 0.75rem;">
+              <!-- Rendered dynamically via JS -->
+            </div>
           </div>
         </div>
 
-      </div>
-    </section>
+        <!-- ACCORDION 3: MIS QUERIES (HISTORIAL DE BÚSQUEDAS DE GENES) -->
+        <div class="accordion-card" id="accordion-searches">
+          <div class="accordion-header" onclick="toggleAccordion('accordion-searches')">
+            <div class="accordion-title-group">
+              <div class="accordion-icon-badge" style="background: rgba(5, 150, 105, 0.12); color: var(--accent-teal);">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+              </div>
+              <div>
+                <h3 style="font-size: 1.1rem; margin: 0; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                  Mis Queries / Búsquedas de Genes Realizadas
+                  <span class="badge-global" id="accordion-searches-badge" style="background: var(--accent-teal); color: white; font-weight: 800; font-size: 0.75rem; padding: 0.15rem 0.55rem;">2 Búsquedas</span>
+                </h3>
+                <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">Histórico de consultas guardadas en la red</p>
+              </div>
+            </div>
+            <div class="accordion-chevron">
+              <i class="fa-solid fa-chevron-down"></i>
+            </div>
+          </div>
+          <div class="accordion-body">
+            <div class="history-table-container" style="padding-top: 0.75rem;">
+              <table class="history-table">
+                <thead>
+                  <tr>
+                    <th>Fecha & Hora</th>
+                    <th>Tipo</th>
+                    <th>Consulta Guardada</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody id="my-searches-list">
+                  <!-- Rendered dynamically via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div></section>
 
     <!-- ========================================================================== -->
     <!-- PESTAÑA 2: EXPLORADOR DE PROYECTOS (BÚSQUEDA Y FILTRADO GLOBAL)          -->
@@ -3562,6 +3653,11 @@ function renderMyGeneAlerts() {
   const totalMatchesCount = matchingSearches.length + matchingOtherProjects.length;
   if (statAlertsMatches) statAlertsMatches.textContent = totalMatchesCount;
 
+  const accordionAlertsBadge = document.getElementById('accordion-alerts-badge');
+  if (accordionAlertsBadge) {
+    accordionAlertsBadge.textContent = `${totalMatchesCount} ${totalMatchesCount === 1 ? 'Alerta' : 'Alertas'}`;
+  }
+
   if (totalMatchesCount === 0) {
     container.innerHTML = `
       <div style="background: var(--bg-card); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); text-align: center;">
@@ -3666,6 +3762,15 @@ function renderNetworkActivityFeed() {
   }
 }
 
+
+function toggleAccordion(id) {
+  const card = document.getElementById(id);
+  if (card) {
+    card.classList.toggle('open');
+  }
+}
+window.toggleAccordion = toggleAccordion;
+
 function renderProfileTab() {
   if (!currentUser) return;
 
@@ -3686,6 +3791,11 @@ function renderProfileTab() {
   const myProjects = projectsData.filter(p => p.email.toLowerCase() === currentUser.email.toLowerCase());
   const statMyProjects = document.getElementById('stat-my-projects');
   if (statMyProjects) statMyProjects.textContent = myProjects.length;
+
+  const accordionProjectsBadge = document.getElementById('accordion-projects-badge');
+  if (accordionProjectsBadge) {
+    accordionProjectsBadge.textContent = `${myProjects.length} ${myProjects.length === 1 ? 'Proyecto' : 'Proyectos'}`;
+  }
 
   const myProjectsGrid = document.getElementById('my-projects-grid');
   if (myProjectsGrid) {
@@ -3732,6 +3842,11 @@ function renderProfileTab() {
   const mySearches = userSearches.filter(s => s.user_email === currentUser.email);
   const statMySearches = document.getElementById('stat-my-searches');
   if (statMySearches) statMySearches.textContent = mySearches.length;
+
+  const accordionSearchesBadge = document.getElementById('accordion-searches-badge');
+  if (accordionSearchesBadge) {
+    accordionSearchesBadge.textContent = `${mySearches.length} ${mySearches.length === 1 ? 'Búsqueda' : 'Búsquedas'}`;
+  }
 
   const mySearchesList = document.getElementById('my-searches-list');
   if (mySearchesList) {
