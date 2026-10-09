@@ -12,7 +12,22 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <!-- Supabase JS Client SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+
+// Top-level global function exports for inline HTML event handlers
+window.switchTab = switchTab;
+window.switchDemoUser = switchDemoUser;
+window.openPublishModal = openPublishModal;
+window.closePublishModal = closePublishModal;
+window.openProjectModal = openProjectModal;
+window.closeProjectModal = closeProjectModal;
+window.executeSimulatedSearch = executeSimulatedSearch;
+window.openGovernanceModal = openGovernanceModal;
+window.closeGovernanceModal = closeGovernanceModal;
+window.openSlidesModal = openSlidesModal;
+window.closeSlidesModal = closeSlidesModal;
+
+</script>
   
   <style>
 /* ==========================================================================
@@ -2256,6 +2271,13 @@ function closeAuthModal() {
 function switchDemoUser(email) {
   if (demoAccounts[email]) {
     currentUser = demoAccounts[email];
+    saveUserToStorage();
+    updateUserUI();
+    renderProfileTab();
+    closeAuthModal();
+    alert(`Has cambiado a la cuenta de: ${currentUser.name} (${currentUser.institution})`);
+  }
+}
 
 // Supabase Cloud Configuration
 let supabaseUrl = localStorage.getItem('colabhunter_supabase_url') || 'https://abogmjikrhrkqcpckfdi.supabase.co';
@@ -2379,7 +2401,7 @@ function loadDemoProjects() {
 
 let currentSlide = 1;
 const totalSlides = 5;
-let activeTab = 'slides-tab';
+let activeTab = 'profile-tab';
 let selectedHpoChips = [
   { code: 'HP:0001250', name: 'Seizures' },
   { code: 'HP:0001263', name: 'Global developmental delay' }
@@ -2446,6 +2468,8 @@ function initSlideDeck() {
   const indicatorsContainer = document.getElementById('slide-indicators');
   const fullscreenBtn = document.getElementById('fullscreen-slide');
 
+  if (!indicatorsContainer || !prevBtn || !nextBtn) return;
+
   indicatorsContainer.innerHTML = '';
   for (let i = 1; i <= totalSlides; i++) {
     const dot = document.createElement('div');
@@ -2457,14 +2481,18 @@ function initSlideDeck() {
   prevBtn.addEventListener('click', () => goToSlide(currentSlide - 1));
   nextBtn.addEventListener('click', () => goToSlide(currentSlide + 1));
 
-  fullscreenBtn.addEventListener('click', () => {
-    const slideElem = document.getElementById('slide-container');
-    if (!document.fullscreenElement) {
-      slideElem.requestFullscreen().catch(err => alert(`Error activando pantalla completa: ${err.message}`));
-    } else {
-      document.exitFullscreen();
-    }
-  });
+  if (fullscreenBtn) {
+    fullscreenBtn.addEventListener('click', () => {
+      const slideElem = document.getElementById('slide-container');
+      if (slideElem) {
+        if (!document.fullscreenElement) {
+          slideElem.requestFullscreen().catch(err => alert(`Error activando pantalla completa: ${err.message}`));
+        } else {
+          document.exitFullscreen();
+        }
+      }
+    });
+  }
 
   document.addEventListener('keydown', (e) => {
     if (activeTab !== 'slides-tab') return;
@@ -2662,131 +2690,169 @@ function setupFilters() {
   });
 }
 
+function renderHpoChips() {
+  const container = document.getElementById('hpo-chips');
+  if (!container) return;
+  container.innerHTML = '';
+  selectedHpoChips.forEach((chip, index) => {
+    const div = document.createElement('div');
+    div.className = 'tag tag-blue';
+    div.style.cssText = 'display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.25rem 0.6rem; font-size: 0.8rem;';
+    div.innerHTML = `
+      <span>${chip.code} - ${chip.name}</span>
+      <i class="fa-solid fa-times" style="cursor: pointer;" onclick="removeHpoChip(${index})"></i>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function removeHpoChip(index) {
+  selectedHpoChips.splice(index, 1);
+  renderHpoChips();
+}
+
 function initProjectForm() {
   const form = document.getElementById('new-project-form');
   const addHpoBtn = document.getElementById('add-hpo-btn');
   const hpoInput = document.getElementById('hpo-search-input');
   const chipsContainer = document.getElementById('hpo-chips');
 
-  renderHpoChips();
+  if (chipsContainer) renderHpoChips();
 
-  addHpoBtn.addEventListener('click', () => {
-    const val = hpoInput.value.trim();
-    if (!val) return;
-    
-    let code = 'HP:0000000';
-    let name = val;
-    if (val.includes('HP:')) {
-      const parts = val.split(' ');
-      code = parts[0];
-      name = parts.slice(1).join(' ') || code;
-    }
+  if (addHpoBtn && hpoInput) {
+    addHpoBtn.addEventListener('click', () => {
+      const val = hpoInput.value.trim();
+      if (!val) return;
+      
+      let code = 'HP:0000000';
+      let name = val;
+      if (val.includes('HP:')) {
+        const parts = val.split(' ');
+        code = parts[0];
+        name = parts.slice(1).join(' ') || code;
+      }
 
-    selectedHpoChips.push({ code, name });
-    hpoInput.value = '';
-    renderHpoChips();
-  });
-
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const gene = document.getElementById('input-gene').value.trim().toUpperCase();
-    if (!gene) {
-      alert('Por favor, introduce el símbolo oficial del Gen de Interés.');
-      return;
-    }
-
-    const rawTitle = document.getElementById('input-title').value.trim();
-    const rawIp = document.getElementById('input-ip-name').value.trim();
-    const rawInstitution = document.getElementById('input-institution').value.trim();
-    const rawEmail = document.getElementById('input-email').value.trim();
-    const region = document.getElementById('input-region').value || (currentUser ? currentUser.country : 'spain') || 'spain';
-    const mechanism = document.getElementById('input-mechanism').value || 'En Estudio / Espectro Mixto';
-    const currentN = parseInt(document.getElementById('input-current-n').value) || 1;
-    const targetN = parseInt(document.getElementById('input-target-n').value) || 10;
-    const status = document.getElementById('input-status').value || 'recruiting';
-    const rawDescription = document.getElementById('input-description').value.trim();
-    const visibility = document.querySelector('input[name="visibility"]:checked') ? document.querySelector('input[name="visibility"]:checked').value : 'public';
-
-    const title = rawTitle || `Estudio y caracterización clínica del gen ${gene}`;
-    const ip = rawIp || (currentUser ? currentUser.name : 'Investigador Principal');
-    const institution = rawInstitution || (currentUser ? currentUser.institution : 'Centro de Investigación');
-    const email = rawEmail || (currentUser ? currentUser.email : 'contacto@colabhunter.org');
-    const description = rawDescription || `Proyecto de colaboración científica en fase de reclutamiento y análisis para el gen ${gene}. Buscar variantes, fenotipos HPO o modelos funcionales.`;
-
-    const selectedModels = [];
-    document.querySelectorAll('input[name="models"]:checked').forEach(cb => {
-      selectedModels.push(cb.value);
+      selectedHpoChips.push({ code, name });
+      hpoInput.value = '';
+      if (chipsContainer) renderHpoChips();
     });
+  }
 
-    let statusLabel = 'Reclutando Cohorte';
-    if (status === 'functional') statusLabel = 'Validación Funcional en Curso';
-    if (status === 'manuscript') statusLabel = 'Buscando Casos para Manuscrito';
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
 
-    // Check if a project already exists for this gene
-    const existingMatch = projectsData.find(p => p.gene.toUpperCase() === gene);
+      const geneEl = document.getElementById('input-gene');
+      if (!geneEl) return;
 
-    const saveAndPublish = () => {
-      const newProject = {
-        id: `proj-${Date.now()}`,
-        gene,
-        title,
-        ip,
-        institution,
-        region,
-        email,
-        github: `https://github.com/${ip.toLowerCase().replace(/[^a-z]/g, '')}-lab`,
-        orcid: (currentUser && currentUser.orcid) ? currentUser.orcid : '0000-0002-0000-0000',
-        phone: '+34 930 000 000',
-        mechanism,
-        hpoTerms: [...selectedHpoChips],
-        currentN,
-        targetN,
-        status,
-        statusLabel,
-        models: selectedModels,
-        description,
-        visibility
-      };
-
-      projectsData.unshift(newProject);
-      saveProjectsToStorage();
-      saveProjectToCloud(newProject);
-      form.reset();
-      selectedHpoChips = [
-        { code: 'HP:0001250', name: 'Seizures' },
-        { code: 'HP:0001263', name: 'Global developmental delay' }
-      ];
-      renderHpoChips();
-      renderProjectsGrid(projectsData);
-      switchTab('explorer-tab');
-    };
-
-    if (existingMatch) {
-      const confirmDirect = confirm(
-        `⚡ ¡COINCIDENCIA DETECTADA EN TIMEPO REAL!\n\n` +
-        `Ya existe un proyecto activo para el gen "${gene}" publicado por:\n` +
-        `• IP: ${existingMatch.ip}\n` +
-        `• Institución: ${existingMatch.institution}\n` +
-        `• Correo: ${existingMatch.email}\n` +
-        `• Cohorte actual: N=${existingMatch.currentN} pacientes\n\n` +
-        `¿Deseas VER LOS DATOS DE CONTACTO DIRECTO de este investigador para unificar cohortes antes de publicar?\n\n` +
-        `[Aceptar] = Ver Ficha de Contacto Directo del IP\n` +
-        `[Cancelar] = Publicar mi proyecto de todos modos`
-      );
-
-      if (confirmDirect) {
-        // Open modal of the existing project
-        openProjectModal(existingMatch.id);
+      const gene = geneEl.value.trim().toUpperCase();
+      if (!gene) {
+        alert('Por favor, introduce el símbolo oficial del Gen de Interés.');
         return;
       }
-    }
 
-    saveAndPublish();
-    alert(`¡Proyecto en ${gene} publicado con éxito! Cualquier investigador podrá ver tus datos de contacto directamente.`);
-  });
+      const titleEl = document.getElementById('input-title');
+      const ipEl = document.getElementById('input-ip-name');
+      const instEl = document.getElementById('input-institution');
+      const emailEl = document.getElementById('input-email');
+      const regionEl = document.getElementById('input-region');
+      const mechEl = document.getElementById('input-mechanism');
+      const currNEl = document.getElementById('input-current-n');
+      const targNEl = document.getElementById('input-target-n');
+      const statusEl = document.getElementById('input-status');
+      const descEl = document.getElementById('input-description');
 
-  // Live Input Gene Overlap Detector
+      const rawTitle = titleEl ? titleEl.value.trim() : '';
+      const rawIp = ipEl ? ipEl.value.trim() : '';
+      const rawInstitution = instEl ? instEl.value.trim() : '';
+      const rawEmail = emailEl ? emailEl.value.trim() : '';
+      const region = (regionEl ? regionEl.value : null) || (currentUser ? currentUser.country : 'spain') || 'spain';
+      const mechanism = (mechEl ? mechEl.value : null) || 'En Estudio / Espectro Mixto';
+      const currentN = parseInt(currNEl ? currNEl.value : 1) || 1;
+      const targetN = parseInt(targNEl ? targNEl.value : 10) || 10;
+      const status = (statusEl ? statusEl.value : null) || 'recruiting';
+      const rawDescription = descEl ? descEl.value.trim() : '';
+      const visibility = document.querySelector('input[name="visibility"]:checked') ? document.querySelector('input[name="visibility"]:checked').value : 'public';
+
+      const title = rawTitle || `Estudio y caracterización clínica del gen ${gene}`;
+      const ip = rawIp || (currentUser ? currentUser.name : 'Investigador Principal');
+      const institution = rawInstitution || (currentUser ? currentUser.institution : 'Centro de Investigación');
+      const email = rawEmail || (currentUser ? currentUser.email : 'contacto@colabhunter.org');
+      const description = rawDescription || `Proyecto de colaboración científica en fase de reclutamiento y análisis para el gen ${gene}. Buscar variantes, fenotipos HPO o modelos funcionales.`;
+
+      const selectedModels = [];
+      document.querySelectorAll('input[name="models"]:checked').forEach(cb => {
+        selectedModels.push(cb.value);
+      });
+
+      let statusLabel = 'Reclutando Cohorte';
+      if (status === 'functional') statusLabel = 'Validación Funcional en Curso';
+      if (status === 'manuscript') statusLabel = 'Buscando Casos para Manuscrito';
+
+      const existingMatch = projectsData.find(p => p.gene.toUpperCase() === gene);
+
+      const saveAndPublish = () => {
+        const newProject = {
+          id: `proj-${Date.now()}`,
+          gene,
+          title,
+          ip,
+          institution,
+          region,
+          email,
+          github: `https://github.com/${ip.toLowerCase().replace(/[^a-z]/g, '')}-lab`,
+          orcid: (currentUser && currentUser.orcid) ? currentUser.orcid : '0000-0002-0000-0000',
+          phone: '+34 930 000 000',
+          mechanism,
+          hpoTerms: [...selectedHpoChips],
+          currentN,
+          targetN,
+          status,
+          statusLabel,
+          models: selectedModels,
+          description,
+          visibility
+        };
+
+        projectsData.unshift(newProject);
+        saveProjectsToStorage();
+        saveProjectToCloud(newProject);
+        if (form) form.reset();
+        selectedHpoChips = [
+          { code: 'HP:0001250', name: 'Seizures' },
+          { code: 'HP:0001263', name: 'Global developmental delay' }
+        ];
+        if (chipsContainer) renderHpoChips();
+        renderProjectsGrid(projectsData);
+        closePublishModal();
+        switchTab('explorer-tab');
+      };
+
+      if (existingMatch) {
+        const confirmDirect = confirm(
+          `⚡ ¡COINCIDENCIA DETECTADA EN TIEMPO REAL!\n\n` +
+          `Ya existe un proyecto activo para el gen "${gene}" publicado por:\n` +
+          `• IP: ${existingMatch.ip}\n` +
+          `• Institución: ${existingMatch.institution}\n` +
+          `• Correo: ${existingMatch.email}\n` +
+          `• Cohorte actual: N=${existingMatch.currentN} pacientes\n\n` +
+          `¿Deseas VER LOS DATOS DE CONTACTO DIRECTO de este investigador para unificar cohortes antes de publicar?\n\n` +
+          `[Aceptar] = Ver Ficha de Contacto Directo del IP\n` +
+          `[Cancelar] = Publicar mi proyecto de todos modos`
+        );
+
+        if (confirmDirect) {
+          closePublishModal();
+          openProjectModal(existingMatch.id);
+          return;
+        }
+      }
+
+      saveAndPublish();
+      alert(`¡Proyecto en ${gene} publicado con éxito! Cualquier investigador podrá ver tus datos de contacto directamente.`);
+    });
+  }
+
   const geneInput = document.getElementById('input-gene');
   if (geneInput) {
     geneInput.addEventListener('input', () => {
@@ -2814,34 +2880,17 @@ function initProjectForm() {
   }
 }
 
-function renderHpoChips() {
-  const container = document.getElementById('hpo-chips');
-  container.innerHTML = '';
-
-  selectedHpoChips.forEach((chip, index) => {
-    const chipElem = document.createElement('span');
-    chipElem.className = 'hpo-chip';
-    chipElem.innerHTML = `
-      ${chip.code} ${chip.name}
-      <i class="fa-solid fa-xmark remove-chip" onclick="removeHpoChip(${index})"></i>
-    `;
-    container.appendChild(chipElem);
-  });
-}
-
-function removeHpoChip(index) {
-  selectedHpoChips.splice(index, 1);
-  renderHpoChips();
-}
-
 function initMatchSimulator() {
-  const runBtn = document.getElementById('run-match-btn');
-  runBtn.addEventListener('click', runMatchSimulation);
-  runMatchSimulation();
+  const runBtn = document.getElementById('run-sim-match-btn') || document.getElementById('run-match-btn');
+  if (runBtn) {
+    runBtn.addEventListener('click', executeSimulatedSearch);
+  }
 }
 
 function runMatchSimulation() {
-  const queryGene = document.getElementById('sim-gene').value.trim().toUpperCase();
+  const simGeneEl = document.getElementById('sim-gene');
+  if (!simGeneEl) return;
+  const queryGene = simGeneEl.value.trim().toUpperCase();
   const queryMech = document.getElementById('sim-mechanism').value;
   const queryHpo = document.getElementById('sim-hpo').value;
 
@@ -2926,14 +2975,22 @@ function initModalControls() {
   const closeBtn = document.getElementById('modal-close-btn');
   const closeAction = document.getElementById('modal-close-action');
 
-  const closeModal = () => modal.classList.remove('active');
+  const closeModal = () => { if (modal) modal.classList.remove('active'); };
 
-  closeBtn.addEventListener('click', closeModal);
-  closeAction.addEventListener('click', closeModal);
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  if (closeAction) closeAction.addEventListener('click', closeModal);
   
-  modal.addEventListener('click', (e) => {
-    if (e.target === modal) closeModal();
-  });
+  if (modal) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+  }
+}
+
+
+function closeProjectModal() {
+  const modal = document.getElementById('project-modal');
+  if (modal) modal.classList.remove('active');
 }
 
 function openProjectModal(projectId) {
@@ -3067,13 +3124,6 @@ function initThemeToggle() {
 /* ==========================================================================
    USER AUTHENTICATION, PROFILE & NOTIFICATION ENGINE
    ========================================================================== */
-
-
-    saveUserToStorage();
-    closeAuthModal();
-    alert(`Has cambiado a la cuenta de: ${currentUser.name} (${currentUser.institution})`);
-  }
-}
 
 function switchAuthTab(tab) {
   const tabs = ['login', 'signup', 'otp', 'demo'];
@@ -3714,6 +3764,134 @@ function renderProfileTab() {
   renderMyGeneAlerts();
   renderNetworkActivityFeed();
 }
+
+
+// Top-level global function exports for inline HTML event handlers
+window.switchTab = switchTab;
+window.switchDemoUser = switchDemoUser;
+window.openPublishModal = openPublishModal;
+window.closePublishModal = closePublishModal;
+window.openProjectModal = openProjectModal;
+window.closeProjectModal = closeProjectModal;
+window.executeSimulatedSearch = executeSimulatedSearch;
+window.openGovernanceModal = openGovernanceModal;
+window.closeGovernanceModal = closeGovernanceModal;
+window.openSlidesModal = openSlidesModal;
+window.closeSlidesModal = closeSlidesModal;
+
 </script>
+
+  <!-- Modal: Publicar Proyecto / Cohorte -->
+  <div class="modal-backdrop" id="publish-modal">
+    <div class="modal-window" style="max-width: 680px;">
+      <div class="modal-header">
+        <h3 style="font-size: 1.25rem;"><i class="fa-solid fa-plus-circle color-primary"></i> Publicar Proyecto o Cohorte de Investigación</h3>
+        <button class="modal-close" onclick="closePublishModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+          Únicamente el <strong>Símbolo del Gen</strong> es obligatorio para dar de alta tu proyecto. Toda la demás información es opcional y servirá para contextualizar tu cohorte ante otros investigadores.
+        </p>
+        <form id="new-project-form" style="display: flex; flex-direction: column; gap: 1rem;">
+          <div style="background: var(--bg-body); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <label style="font-weight: 700; font-size: 0.9rem; display: block; margin-bottom: 0.35rem;">
+              Gen de Interés <span style="color: var(--accent-pink);">*</span> (Único obligatorio)
+            </label>
+            <input type="text" id="input-gene" class="form-input" placeholder="Ej. KCNQ2, SCN1A, MECP2..." required style="font-weight: 700; font-family: var(--font-code); text-transform: uppercase;">
+            <div id="gene-match-live-hint"></div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div>
+              <label style="font-weight: 600; font-size: 0.85rem; display: block; margin-bottom: 0.35rem;">Título del Proyecto (Opcional)</label>
+              <input type="text" id="input-title" class="form-input" placeholder="Ej. Caracterización clínica de la cohorte KCNQ2">
+            </div>
+            <div>
+              <label style="font-weight: 600; font-size: 0.85rem; display: block; margin-bottom: 0.35rem;">Nombre del Investigador (IP)</label>
+              <input type="text" id="input-ip-name" class="form-input" placeholder="Nombre completo">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div>
+              <label style="font-weight: 600; font-size: 0.85rem; display: block; margin-bottom: 0.35rem;">Institución / Hospital</label>
+              <input type="text" id="input-institution" class="form-input" placeholder="Ej. Hospital Universitario / Centro de Investigación">
+            </div>
+            <div>
+              <label style="font-weight: 600; font-size: 0.85rem; display: block; margin-bottom: 0.35rem;">Correo Electrónico de Contacto</label>
+              <input type="email" id="input-email" class="form-input" placeholder="contacto@institucion.org">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem;">
+            <div>
+              <label style="font-weight: 600; font-size: 0.85rem; display: block; margin-bottom: 0.35rem;">País</label>
+              <select id="input-region" class="form-select">
+                <option value="spain">España</option>
+                <option value="catalonia">España</option>
+                <option value="germany">Alemania</option>
+                <option value="usa">Estados Unidos</option>
+                <option value="france">Francia</option>
+                <option value="uk">Reino Unido</option>
+                <option value="italy">Italia</option>
+                <option value="argentina">Argentina</option>
+                <option value="chile">Chile</option>
+                <option value="colombia">Colombia</option>
+                <option value="mexico">México</option>
+                <option value="other">Otro País</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-weight: 600; font-size: 0.85rem; display: block; margin-bottom: 0.35rem;">Pacientes Actuales</label>
+              <input type="number" id="input-current-n" class="form-input" value="1" min="1">
+            </div>
+            <div>
+              <label style="font-weight: 600; font-size: 0.85rem; display: block; margin-bottom: 0.35rem;">Objetivo Cohorte (N)</label>
+              <input type="number" id="input-target-n" class="form-input" value="10" min="1">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div>
+              <label style="font-weight: 600; font-size: 0.85rem; display: block; margin-bottom: 0.35rem;">Mecanismo Patogénico</label>
+              <select id="input-mechanism" class="form-select">
+                <option value="Pérdida de Función (LoF / Haploinsuficiencia)">Pérdida de Función (LoF)</option>
+                <option value="Ganancia de Función (GoF / Dominante Negativo)">Ganancia de Función (GoF)</option>
+                <option value="En Estudio / Espectro Mixto">En Estudio / Espectro Mixto</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-weight: 600; font-size: 0.85rem; display: block; margin-bottom: 0.35rem;">Estado de la Cohorte</label>
+              <select id="input-status" class="form-select">
+                <option value="recruiting">Reclutando Cohorte</option>
+                <option value="functional">Validación Funcional en Curso</option>
+                <option value="manuscript">Buscando Casos para Manuscrito</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label style="font-weight: 600; font-size: 0.85rem; display: block; margin-bottom: 0.35rem;">Términos Fenotípicos HPO (Opcional)</label>
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <input type="text" id="hpo-search-input" class="form-input" placeholder="Ej. Seizures o HP:0001250">
+              <button type="button" id="add-hpo-btn" class="btn btn-secondary btn-sm"><i class="fa-solid fa-plus"></i> Añadir</button>
+            </div>
+            <div id="hpo-chips" style="display: flex; flex-wrap: wrap; gap: 0.4rem;"></div>
+          </div>
+
+          <div>
+            <label style="font-weight: 600; font-size: 0.85rem; display: block; margin-bottom: 0.35rem;">Descripción Corta (Opcional)</label>
+            <textarea id="input-description" class="form-input" rows="3" placeholder="Describe brevemente los objetivos del estudio o los fenotipos buscados..."></textarea>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 0.5rem;">
+            <button type="button" class="btn btn-secondary" onclick="closePublishModal()">Cancelar</button>
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Publicar Proyecto</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
